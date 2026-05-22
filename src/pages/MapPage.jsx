@@ -24,9 +24,9 @@ function MapPage({
       })
     : [];
 
+  // 지도 담당자가 전체 학교 평면도에서 건물을 클릭할 때 이 함수를 연결하면 됩니다.
   const handleSelectBuilding = (buildingId) => {
     setSelectedBuildingId(buildingId);
-    // 건물 진입 시 사용자가 층을 고르기 전까지 1층을 기본값으로 둡니다.
     setSelectedFloor(1);
   };
 
@@ -35,31 +35,16 @@ function MapPage({
       <h1>지도</h1>
 
       {!selectedBuilding ? (
-        <>
-          <section className="campus-map-box">
-            <p className="map-title">전체적인 학교 구조 평면도</p>
+        <section className="campus-map-box">
+          <p className="map-title">전체적인 학교 구조 평면도</p>
 
-            <div className="campus-map-placeholder">
-              <p>지도</p>
-            </div>
-          </section>
-
-          <section className="map-guide-box">
-            <p>단국대학교</p>
-
-            <div className="building-select-row">
-              {buildings.map((building) => (
-                <button
-                  key={building.buildingId}
-                  className="building-select-button"
-                  onClick={() => handleSelectBuilding(building.buildingId)}
-                >
-                  {building.buildingName}
-                </button>
-              ))}
-            </div>
-          </section>
-        </>
+          <div
+            className="campus-map-placeholder"
+            data-connect-handler="handleSelectBuilding"
+          >
+            <p>지도</p>
+          </div>
+        </section>
       ) : (
         <>
           <button
