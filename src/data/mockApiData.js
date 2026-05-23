@@ -23,15 +23,15 @@ export const buildings = [
     buildingId: 1,
     buildingName: "소웨관",
     campus: "죽전",
-    latitude: 37.3211111,
-    longitude: 127.1261111,
+    latitude: 37.3228549,
+    longitude: 127.1276063,
   },
   {
     buildingId: 2,
-    buildingName: "공학관",
+    buildingName: "제1공학관",
     campus: "죽전",
-    latitude: 37.3222222,
-    longitude: 127.1272222,
+    latitude: 37.3209511,
+    longitude: 127.1258600,
   },
 ];
 

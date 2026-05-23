@@ -3,6 +3,7 @@ import { mockApi } from "../api/mockApi";
 import { buildings } from "../data/mockApiData";
 import BottomNav from "../components/BottomNav";
 import ClassroomCard from "../components/ClassroomCard";
+import { NavermapsProvider, Container as MapContainer, NaverMap, Marker} from "react-naver-maps";
 
 function MapPage({
   favorites,
@@ -12,6 +13,9 @@ function MapPage({
 }) {
   const [selectedBuildingId, setSelectedBuildingId] = useState(null);
   const [selectedFloor, setSelectedFloor] = useState(1);
+
+  const [mapInstance, setMapInstance] = useState(null);
+  const defaultDankookUnivCoords = { lat: 37.3205730, lng: 127.1276137 };
 
   const selectedBuilding = buildings.find(
     (building) => building.buildingId === selectedBuildingId
@@ -28,20 +32,38 @@ function MapPage({
     setSelectedBuildingId(buildingId);
     // 건물 진입 시 사용자가 층을 고르기 전까지 1층을 기본값으로 둡니다.
     setSelectedFloor(1);
+
+    const targetBuilding = buildings.find((b) => b.buildingId === buildingId)
   };
 
   return (
-    <main className="page">
-      <h1>지도</h1>
+    <NavermapsProvider ncpKeyId="r6eww9eh1v">
+      <main className="page">
+        <h1>지도</h1>
 
       {!selectedBuilding ? (
         <>
           <section className="campus-map-box">
             <p className="map-title">전체적인 학교 구조 평면도</p>
 
-            <div className="campus-map-placeholder">
-              <p>지도</p>
-            </div>
+            <MapContainer style={{ width: "100%", height: "350px", borderRadius: "8px", overflow: "hidden" }}>
+              <NaverMap
+                defaultCenter={defaultDankookUnivCoords}
+                defaultZoom={16}
+                ref={setMapInstance}
+                >
+                {buildings.map((building) => (
+                  building.lat && building.lng && (
+                    <Marker
+                      key={building.buildingId}
+                      position={{ lat: building.lat, lng: building.lng }}
+                      title={building.buildingName}
+                      onClick={() => handleSelectBuilding(building.buildingId)}
+                      />
+                  )
+                ))}
+                </NaverMap>
+            </MapContainer>
           </section>
 
           <section className="map-guide-box">
@@ -127,6 +149,7 @@ function MapPage({
 
       <BottomNav currentPage="map" onMovePage={onMovePage} />
     </main>
+  </NavermapsProvider>
   );
 }
 
