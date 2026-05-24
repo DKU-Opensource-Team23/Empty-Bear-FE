@@ -23,15 +23,29 @@ export const buildings = [
     buildingId: 1,
     buildingName: "소웨관",
     campus: "죽전",
-    latitude: 37.3211111,
-    longitude: 127.1261111,
+    latitude: 37.3228549,
+    longitude: 127.1276063,
+    floorPlans: {
+      1: "/images/floorplans/software/1f.png",
+      2: "/images/floorplans/software/2f.png",
+      3: "/images/floorplans/software/3f.png",
+      4: "/images/floorplans/software/4f.png",
+      5: "/images/floorplans/software/5f.png",
+    }
   },
   {
     buildingId: 2,
-    buildingName: "공학관",
+    buildingName: "제1공학관",
     campus: "죽전",
-    latitude: 37.3222222,
-    longitude: 127.1272222,
+    latitude: 37.3209511,
+    longitude: 127.1258600,
+    floorPlans: {
+      1: "/images/floorplans/engineering1/1f.png",
+      2: "/images/floorplans/engineering1/2f.png",
+      3: "/images/floorplans/engineering1/3f.png",
+      4: "/images/floorplans/engineering1/4f.png",
+      5: "/images/floorplans/engineering1/5f.png",
+    }
   },
 ];
 

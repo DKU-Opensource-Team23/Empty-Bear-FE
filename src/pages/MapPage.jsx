@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { mockApi } from "../api/mockApi";
 import { buildings } from "../data/mockApiData";
 import BottomNav from "../components/BottomNav";
 import ClassroomCard from "../components/ClassroomCard";
+import { NavermapsProvider, Container as MapContainer, NaverMap, Marker} from "react-naver-maps";
 
 function MapPage({
   favorites,
@@ -12,6 +13,15 @@ function MapPage({
 }) {
   const [selectedBuildingId, setSelectedBuildingId] = useState(null);
   const [selectedFloor, setSelectedFloor] = useState(1);
+
+  const [mapInstance, setMapInstance] = useState(null);
+  const defaultDankookUnivCoords = { lat: 37.3205730, lng: 127.1276137 };
+  const handleMapLoad = (map) => {
+    setMapInstance(map);
+    if (!map) return;
+    map.setCenter(defaultDankookUnivCoords);
+    map.setZoom(16);
+    };
 
   const selectedBuilding = buildings.find(
     (building) => building.buildingId === selectedBuildingId
@@ -31,17 +41,46 @@ function MapPage({
   };
 
   return (
-    <main className="page">
-      <h1>지도</h1>
+    <NavermapsProvider ncpKeyId="r6eww9eh1v">
+      <main className="page">
+        <h1>지도</h1>
 
       {!selectedBuilding ? (
         <>
           <section className="campus-map-box">
             <p className="map-title">전체적인 학교 구조 평면도</p>
 
-            <div className="campus-map-placeholder">
-              <p>지도</p>
-            </div>
+            <MapContainer style={{
+              width: "360px",
+              height: "350px",
+              borderRadius: "8px",
+              overflow: "hidden",
+              flexShrink: 0,
+              flexGrow: 0,
+              }}>
+              <NaverMap
+                defaultCenter={defaultDankookUnivCoords}
+                onLoad={handleMapLoad}
+                style={{ width: "360px", height: "350px" }}
+                draggable={false}
+                pinchZoom={false}
+                keyboardShortcuts={false}
+                zoomControl={false}
+                scrollWheel={false}
+                disableDoubleClickZoom={true}
+                >
+                {buildings.map((building) => (
+                  building.latitude && building.longitude && (
+                    <Marker
+                      key={building.buildingId}
+                      position={{ lat: building.latitude, lng: building.longitude }}
+                      title={building.buildingName}
+                      onClick={() => handleSelectBuilding(building.buildingId)}
+                    />
+                  )
+                ))}
+              </NaverMap>
+            </MapContainer>
           </section>
 
           <section className="map-guide-box">
@@ -69,12 +108,27 @@ function MapPage({
             ← 전체 학교 지도
           </button>
 
-          <section className="map-box">
-            <p>
-              {selectedBuilding.buildingName} {selectedFloor}층 평면도 영역
-            </p>
+          <section className="map-box" style={{
+            width: "390px",
+            height: "200px",
+            borderRadius: "8px",
+            overflow: "hidden",
+            backgroundColor: "#f5f5f5",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }}>
+            {selectedBuilding.floorPlans && selectedBuilding.floorPlans[String(selectedFloor)] ? (
+              <img 
+                src={selectedBuilding.floorPlans[String(selectedFloor)]} 
+                style={{ width: "100%", height: "100%", objectFit: "contain" }}
+              />
+            ) : (
+              <p style={{ color: "#888", margin: 0 }}>
+                {selectedBuilding.buildingName} {selectedFloor}층 평면도 준비 중
+              </p>
+            )}
           </section>
-
           <div className="status-legend">
             <span>
               <i className="legend-dot available" />
@@ -127,6 +181,7 @@ function MapPage({
 
       <BottomNav currentPage="map" onMovePage={onMovePage} />
     </main>
+  </NavermapsProvider>
   );
 }
 
