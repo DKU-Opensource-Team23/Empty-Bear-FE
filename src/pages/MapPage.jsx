@@ -38,8 +38,6 @@ function MapPage({
     setSelectedBuildingId(buildingId);
     // 건물 진입 시 사용자가 층을 고르기 전까지 1층을 기본값으로 둡니다.
     setSelectedFloor(1);
-
-    const targetBuilding = buildings.find((b) => b.buildingId === buildingId)
   };
 
   return (
@@ -69,6 +67,7 @@ function MapPage({
                 keyboardShortcuts={false}
                 zoomControl={false}
                 scrollWheel={false}
+                disableDoubleClickZoom={true}
                 >
                 {buildings.map((building) => (
                   building.latitude && building.longitude && (
@@ -109,12 +108,27 @@ function MapPage({
             ← 전체 학교 지도
           </button>
 
-          <section className="map-box">
-            <p>
-              {selectedBuilding.buildingName} {selectedFloor}층 평면도 영역
-            </p>
+          <section className="map-box" style={{
+            width: "390px",
+            height: "200px",
+            borderRadius: "8px",
+            overflow: "hidden",
+            backgroundColor: "#f5f5f5",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }}>
+            {selectedBuilding.floorPlans && selectedBuilding.floorPlans[String(selectedFloor)] ? (
+              <img 
+                src={selectedBuilding.floorPlans[String(selectedFloor)]} 
+                style={{ width: "100%", height: "100%", objectFit: "contain" }}
+              />
+            ) : (
+              <p style={{ color: "#888", margin: 0 }}>
+                {selectedBuilding.buildingName} {selectedFloor}층 평면도 준비 중
+              </p>
+            )}
           </section>
-
           <div className="status-legend">
             <span>
               <i className="legend-dot available" />

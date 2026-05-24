@@ -25,6 +25,13 @@ export const buildings = [
     campus: "죽전",
     latitude: 37.3228549,
     longitude: 127.1276063,
+    floorPlans: {
+      1: "/images/floorplans/software/1f.png",
+      2: "/images/floorplans/software/2f.png",
+      3: "/images/floorplans/software/3f.png",
+      4: "/images/floorplans/software/4f.png",
+      5: "/images/floorplans/software/5f.png",
+    }
   },
   {
     buildingId: 2,
@@ -32,6 +39,13 @@ export const buildings = [
     campus: "죽전",
     latitude: 37.3209511,
     longitude: 127.1258600,
+    floorPlans: {
+      1: "/images/floorplans/engineering1/1f.png",
+      2: "/images/floorplans/engineering1/2f.png",
+      3: "/images/floorplans/engineering1/3f.png",
+      4: "/images/floorplans/engineering1/4f.png",
+      5: "/images/floorplans/engineering1/5f.png",
+    }
   },
 ];
 
