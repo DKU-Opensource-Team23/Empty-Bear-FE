@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { mockApi } from "../api/mockApi";
 import { buildings } from "../data/mockApiData";
 import BottomNav from "../components/BottomNav";
@@ -16,6 +16,12 @@ function MapPage({
 
   const [mapInstance, setMapInstance] = useState(null);
   const defaultDankookUnivCoords = { lat: 37.3205730, lng: 127.1276137 };
+  const handleMapLoad = (map) => {
+    setMapInstance(map);
+    if (!map) return;
+    map.setCenter(defaultDankookUnivCoords);
+    map.setZoom(16);
+    };
 
   const selectedBuilding = buildings.find(
     (building) => building.buildingId === selectedBuildingId
@@ -46,11 +52,23 @@ function MapPage({
           <section className="campus-map-box">
             <p className="map-title">전체적인 학교 구조 평면도</p>
 
-            <MapContainer style={{ width: "100%", height: "350px", borderRadius: "8px", overflow: "hidden" }}>
+            <MapContainer style={{
+              width: "360px",
+              height: "350px",
+              borderRadius: "8px",
+              overflow: "hidden",
+              flexShrink: 0,
+              flexGrow: 0,
+              }}>
               <NaverMap
                 defaultCenter={defaultDankookUnivCoords}
-                defaultZoom={16}
-                ref={setMapInstance}
+                onLoad={handleMapLoad}
+                style={{ width: "360px", height: "350px" }}
+                draggable={false}
+                pinchZoom={false}
+                keyboardShortcuts={false}
+                zoomControl={false}
+                scrollWheel={false}
                 >
                 {buildings.map((building) => (
                   building.lat && building.lng && (
