@@ -71,16 +71,16 @@ function MapPage({
                 scrollWheel={false}
                 >
                 {buildings.map((building) => (
-                  building.lat && building.lng && (
+                  building.latitude && building.longitude && (
                     <Marker
                       key={building.buildingId}
-                      position={{ lat: building.lat, lng: building.lng }}
+                      position={{ lat: building.latitude, lng: building.longitude }}
                       title={building.buildingName}
                       onClick={() => handleSelectBuilding(building.buildingId)}
-                      />
+                    />
                   )
                 ))}
-                </NaverMap>
+              </NaverMap>
             </MapContainer>
           </section>
 
