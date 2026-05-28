@@ -414,8 +414,7 @@ button {
   justify-content: center;
 }
 
-.campus-map-box,
-.map-guide-box {
+.campus-map-box {
   border: 1px solid #cfe5fb;
   padding: 16px;
   margin-bottom: 20px;
@@ -455,26 +454,6 @@ button {
   transform: translateX(-50%);
   color: #7f97ad;
   font-size: 13px;
-}
-
-.map-guide-box p {
-  margin-top: 0;
-}
-
-.building-select-row {
-  display: flex;
-  gap: 8px;
-  margin-top: 14px;
-}
-
-.building-select-button {
-  flex: 1;
-  min-height: 42px;
-  border: 1px solid #b8d8f5;
-  border-radius: 12px;
-  color: #1267d6;
-  background: #f7fbff;
-  font-weight: bold;
 }
 
 .status-legend {
