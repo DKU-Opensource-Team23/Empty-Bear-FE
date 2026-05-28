@@ -107,6 +107,8 @@ function MapPage({ favorites, onToggleFavorite, onOpenDetail, onMovePage }) {
     map.setZoom(16);
   };
 
+  const svgUrl = selectedBuilding?.floorPlans?.[String(selectedFloor)];
+
   return (
     <NavermapsProvider ncpKeyId="r6eww9eh1v">
       <main className="page">

@@ -26,11 +26,11 @@ export const buildings = [
     latitude: 37.3228549,
     longitude: 127.1276063,
     floorPlans: {
-      1: "/images/floorplans/software/1f.png",
-      2: "/images/floorplans/software/2f.png",
-      3: "/images/floorplans/software/3f.png",
-      4: "/images/floorplans/software/4f.png",
-      5: "/images/floorplans/software/5f.png",
+      1: "/images/floorplans/software/1f.svg",
+      2: "/images/floorplans/software/2f.svg",
+      3: "/images/floorplans/software/3f.svg",
+      4: "/images/floorplans/software/4f.svg",
+      5: "/images/floorplans/software/5f.svg",
     }
   },
   {
@@ -40,11 +40,6 @@ export const buildings = [
     latitude: 37.3209511,
     longitude: 127.1258600,
     floorPlans: {
-      1: "/images/floorplans/engineering1/1f.png",
-      2: "/images/floorplans/engineering1/2f.png",
-      3: "/images/floorplans/engineering1/3f.png",
-      4: "/images/floorplans/engineering1/4f.png",
-      5: "/images/floorplans/engineering1/5f.png",
     }
   },
 ];
@@ -122,6 +117,20 @@ export const classrooms = [
     availableMinutes: 0,
     nextClassTime: "현재 수업 중",
     status: "busy",
+  },
+  {
+    classroomId: 5,
+    roomName: "101",
+    buildingId: 1,
+    floorPlanId: 1,
+    floor: 1,
+    hasOutlet: true,
+    description: "조용하게 공부하기 좋은 강의실",
+    mapX: null,
+    mapY: null,
+    availableMinutes: 100,
+    nextClassTime: "16:00",
+    status: "available",
   },
 ];
 
