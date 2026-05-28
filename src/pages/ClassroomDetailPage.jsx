@@ -1,4 +1,8 @@
-import { mockApi } from "../api/mockApi";
+import { useEffect, useState } from "react";
+import {
+  getClassroomReviews,
+  getClassroomSchedule,
+} from "../api/classroomApi";
 
 function ClassroomDetailPage({
   classroom,
@@ -7,12 +11,30 @@ function ClassroomDetailPage({
   onMoveReview,
   onBack,
 }) {
+  const [reviews, setReviews] = useState([]);
+  const [schedules, setSchedules] = useState([]);
   const isFavorite = favorites.some(
     (room) => room.classroomId === classroom.classroomId
   );
-  const reviews = mockApi.getClassroomReviews(classroom.classroomId);
   const visibleReviews = reviews.slice(0, 2);
-  const schedules = mockApi.getClassroomSchedule(classroom.classroomId);
+
+  useEffect(() => {
+    async function loadDetailData() {
+      try {
+        const [reviewResponse, scheduleResponse] = await Promise.all([
+          getClassroomReviews(classroom.classroomId, { limit: 2 }),
+          getClassroomSchedule(classroom.classroomId),
+        ]);
+
+        setReviews(reviewResponse.reviews ?? []);
+        setSchedules(scheduleResponse.weeklySchedule ?? []);
+      } catch (error) {
+        alert(error.message || "강의실 부가 정보를 불러오지 못했습니다.");
+      }
+    }
+
+    loadDetailData();
+  }, [classroom.classroomId]);
 
   return (
     <main className="page">
@@ -32,9 +54,9 @@ function ClassroomDetailPage({
         <h1>
           {classroom.buildingName} {classroom.roomName}
         </h1>
-        <p>사용 가능 시간: {classroom.availableMinutes}분</p>
+        <p>사용 가능 시간: {classroom.availableMinutes ?? 0}분</p>
         <p>콘센트 여부: {classroom.hasOutlet ? "있음" : "없음"}</p>
-        <p>다음 수업: {classroom.nextClassTime}</p>
+        <p>다음 수업: {classroom.nextClassTime ?? "없음"}</p>
 
         <div className="detail-review-row">
           <div className="review-preview-list">
@@ -47,7 +69,9 @@ function ClassroomDetailPage({
               <>
                 {visibleReviews.map((review) => (
                   <p key={review.reviewId} className="review-preview">
-                    {review.tagNames.join(" / ")}
+                    {(review.tags ?? [])
+                      .map((tag) => tag.displayName)
+                      .join(" / ")}
                   </p>
                 ))}
                 {visibleReviews.length === 1 && (

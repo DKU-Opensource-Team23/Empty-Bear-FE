@@ -1,9 +1,16 @@
-import { useState } from "react";
-import { mockApi } from "../api/mockApi";
+import { useEffect, useState } from "react";
+import {
+  createClassroomReview,
+  getClassroomReviews,
+} from "../api/classroomApi";
+import { getReviewTags } from "../api/tagApi";
 
 function ReviewPage({ classroom, onBack }) {
-  const reviewTags = mockApi.getReviewTags();
-  const classroomReviews = mockApi.getClassroomReviews(classroom.classroomId);
+  const [reviewTags, setReviewTags] = useState([]);
+  const [classroomReviews, setClassroomReviews] = useState([]);
+  const [selectedTagIds, setSelectedTagIds] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const quietTagIds = reviewTags
     .filter((tag) => ["QUIET", "NOISY"].includes(tag.code))
     .map((tag) => tag.tagId);
@@ -11,7 +18,23 @@ function ReviewPage({ classroom, onBack }) {
     .filter((tag) => ["OUTLET_ENOUGH", "OUTLET_LACK"].includes(tag.code))
     .map((tag) => tag.tagId);
 
-  const [selectedTagIds, setSelectedTagIds] = useState([]);
+  useEffect(() => {
+    async function loadReviewData() {
+      try {
+        const [tagResponse, reviewResponse] = await Promise.all([
+          getReviewTags(),
+          getClassroomReviews(classroom.classroomId),
+        ]);
+
+        setReviewTags(tagResponse.tags ?? []);
+        setClassroomReviews(reviewResponse.reviews ?? []);
+      } catch (error) {
+        alert(error.message || "리뷰 정보를 불러오지 못했습니다.");
+      }
+    }
+
+    loadReviewData();
+  }, [classroom.classroomId]);
 
   const selectTag = (tagId, sameGroupIds) => {
     setSelectedTagIds((prev) => [
@@ -20,7 +43,7 @@ function ReviewPage({ classroom, onBack }) {
     ]);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const hasQuietTag = selectedTagIds.some((id) => quietTagIds.includes(id));
     const hasOutletTag = selectedTagIds.some((id) => outletTagIds.includes(id));
 
@@ -29,8 +52,18 @@ function ReviewPage({ classroom, onBack }) {
       return;
     }
 
-    alert("리뷰 등록 API 연결 준비가 완료되었습니다.");
-    onBack();
+    try {
+      setIsSubmitting(true);
+      await createClassroomReview(classroom.classroomId, {
+        tagIds: selectedTagIds,
+      });
+      alert("리뷰가 등록되었습니다.");
+      onBack();
+    } catch (error) {
+      alert(error.message || "리뷰 등록에 실패했습니다.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -83,8 +116,12 @@ function ReviewPage({ classroom, onBack }) {
         </div>
 
         <div className="review-submit-row">
-          <button className="primary-button" onClick={handleSubmit}>
-            리뷰 등록
+          <button
+            className="primary-button"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "등록 중" : "리뷰 등록"}
           </button>
         </div>
       </section>
@@ -97,7 +134,7 @@ function ReviewPage({ classroom, onBack }) {
         ) : (
           classroomReviews.map((review) => (
             <p key={review.reviewId} className="review-list-item">
-              {review.tagNames.join(" / ")}
+              {(review.tags ?? []).map((tag) => tag.displayName).join(" / ")}
             </p>
           ))
         )}

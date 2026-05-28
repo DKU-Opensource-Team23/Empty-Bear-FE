@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { mockApi } from "../api/mockApi";
+import { signup } from "../api/authApi";
 
-function SignupPage({ onMoveToLogin, onSignup }) {
+function SignupPage({ onMoveToLogin }) {
   const [form, setForm] = useState({
     loginId: "",
     password: "",
@@ -10,13 +10,14 @@ function SignupPage({ onMoveToLogin, onSignup }) {
     studentNumber: "",
     department: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     if (
       !form.loginId ||
       !form.password ||
@@ -33,16 +34,22 @@ function SignupPage({ onMoveToLogin, onSignup }) {
       return;
     }
 
-    const newUser = mockApi.signup({
-      loginId: form.loginId,
-      password: form.password,
-      nickname: form.nickname,
-      studentNumber: form.studentNumber,
-      department: form.department,
-      profileImageUrl: "",
-    });
-
-    onSignup(newUser);
+    try {
+      setIsSubmitting(true);
+      await signup({
+        loginId: form.loginId,
+        password: form.password,
+        nickname: form.nickname,
+        studentNumber: form.studentNumber,
+        department: form.department,
+      });
+      alert("회원가입이 완료되었습니다. 로그인해주세요.");
+      onMoveToLogin();
+    } catch (error) {
+      alert(error.message || "회원가입에 실패했습니다.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -88,7 +95,9 @@ function SignupPage({ onMoveToLogin, onSignup }) {
         onChange={handleChange}
       />
 
-      <button onClick={handleSignup}>회원가입</button>
+      <button onClick={handleSignup} disabled={isSubmitting}>
+        {isSubmitting ? "가입 중" : "회원가입"}
+      </button>
 
       <p>
         이미 계정이 있나요?{" "}
