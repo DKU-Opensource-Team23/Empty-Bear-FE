@@ -1,18 +1,26 @@
 import { useState } from "react";
-import { mockApi } from "../api/mockApi";
+import { login } from "../api/authApi";
 
 function LoginPage({ onMoveToSignup, onLogin }) {
   const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!loginId || !password) {
       alert("아이디와 비밀번호를 입력해주세요.");
       return;
     }
 
-    const response = mockApi.login({ loginId, password });
-    onLogin(response.user);
+    try {
+      setIsSubmitting(true);
+      const response = await login({ loginId, password });
+      onLogin(response.user);
+    } catch (error) {
+      alert(error.message || "로그인에 실패했습니다.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -33,7 +41,9 @@ function LoginPage({ onMoveToSignup, onLogin }) {
         onChange={(e) => setPassword(e.target.value)}
       />
 
-      <button onClick={handleLogin}>로그인</button>
+      <button onClick={handleLogin} disabled={isSubmitting}>
+        {isSubmitting ? "로그인 중" : "로그인"}
+      </button>
 
       <p>
         처음이신가요?{" "}
