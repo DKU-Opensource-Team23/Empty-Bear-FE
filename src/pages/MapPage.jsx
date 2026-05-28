@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { mockApi } from "../api/mockApi";
 import { buildings } from "../data/mockApiData";
 import BottomNav from "../components/BottomNav";
 import ClassroomCard from "../components/ClassroomCard";
+import FloorPlan from "../components/FloorPlan";
 import { NavermapsProvider, Container as MapContainer, NaverMap, Marker} from "react-naver-maps";
 
 function MapPage({
@@ -39,6 +40,8 @@ function MapPage({
     // 건물 진입 시 사용자가 층을 고르기 전까지 1층을 기본값으로 둡니다.
     setSelectedFloor(1);
   };
+
+  const svgUrl = selectedBuilding?.floorPlans?.[String(selectedFloor)];
 
   return (
     <NavermapsProvider ncpKeyId="r6eww9eh1v">
@@ -119,9 +122,9 @@ function MapPage({
             justifyContent: "center"
           }}>
             {selectedBuilding.floorPlans && selectedBuilding.floorPlans[String(selectedFloor)] ? (
-              <img 
-                src={selectedBuilding.floorPlans[String(selectedFloor)]} 
-                style={{ width: "100%", height: "100%", objectFit: "contain" }}
+              <FloorPlan
+                svgUrl={svgUrl}
+                classrooms={floorClassrooms}
               />
             ) : (
               <p style={{ color: "#888", margin: 0 }}>

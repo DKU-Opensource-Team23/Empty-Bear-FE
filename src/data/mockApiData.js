@@ -118,6 +118,20 @@ export const classrooms = [
     nextClassTime: "현재 수업 중",
     status: "busy",
   },
+  {
+    classroomId: 5,
+    roomName: "101",
+    buildingId: 1,
+    floorPlanId: 1,
+    floor: 1,
+    hasOutlet: true,
+    description: "조용하게 공부하기 좋은 강의실",
+    mapX: null,
+    mapY: null,
+    availableMinutes: 100,
+    nextClassTime: "16:00",
+    status: "available",
+  },
 ];
 
 export const schedules = [
