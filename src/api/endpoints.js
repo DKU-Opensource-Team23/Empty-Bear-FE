@@ -1,31 +1,32 @@
-// 노션 API 명세에 적힌 URL을 한곳에 모아둡니다.
-// 나중에 실제 fetch 연결을 할 때 화면 코드 대신 이 파일만 우선 확인하면 됩니다.
+// Backend API endpoint paths.
+// Keep this file in sync with the Spring Boot controller mappings.
 export const endpoints = {
   auth: {
     login: "/api/auth/login",
     signup: "/api/auth/signup",
-    refresh: "/api/auth/refresh",
+    reissue: "/api/auth/reissue",
     logout: "/api/auth/logout",
   },
   users: {
     me: "/api/users/me",
     preferences: "/api/users/me/preferences",
     favorites: "/api/users/me/favorites",
-    recentClassrooms: "/api/users/me/recent-classrooms",
   },
   classrooms: {
     list: "/api/classrooms",
     detail: (classroomId) => `/api/classrooms/${classroomId}`,
     schedule: (classroomId) => `/api/classrooms/${classroomId}/schedule`,
     reviews: (classroomId) => `/api/classrooms/${classroomId}/reviews`,
+    review: (classroomId, reviewId) =>
+      `/api/classrooms/${classroomId}/reviews/${reviewId}`,
   },
   buildings: {
     list: "/api/buildings",
     floors: (buildingId) => `/api/buildings/${buildingId}/floors`,
-    floorPlan: (buildingId, floor) =>
-      `/api/buildings/${buildingId}/floors/${floor}/map`,
-    floorClassrooms: (buildingId, floor) =>
-      `/api/buildings/${buildingId}/floors/${floor}/classrooms`,
+    floorPlan: (buildingId, floorValue) =>
+      `/api/buildings/${buildingId}/floors/${floorValue}/floor-plan`,
+    floorClassrooms: (buildingId, floorValue) =>
+      `/api/buildings/${buildingId}/floors/${floorValue}/classrooms/status`,
   },
   tags: {
     reviews: "/api/tags/reviews",

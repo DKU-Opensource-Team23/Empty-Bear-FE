@@ -1,4 +1,7 @@
 const statusLabel = {
+  AVAILABLE_LONG: "사용 가능",
+  AVAILABLE_SOON: "곧 수업",
+  OCCUPIED: "사용 중",
   available: "사용 가능",
   soon: "곧 수업",
   busy: "사용 중",
@@ -18,12 +21,12 @@ function ClassroomCard({
             {classroom.buildingName} {classroom.roomName}
           </h3>
           <span className={`status-badge ${classroom.status}`}>
-            {statusLabel[classroom.status]}
+            {statusLabel[classroom.status] ?? "상태 확인"}
           </span>
         </div>
-        <p>사용 가능 시간: {classroom.availableMinutes}분</p>
+        <p>사용 가능 시간: {classroom.availableMinutes ?? 0}분</p>
         <p>콘센트: {classroom.hasOutlet ? "있음" : "없음"}</p>
-        <p>다음 수업: {classroom.nextClassTime}</p>
+        <p>다음 수업: {classroom.nextClassTime ?? "없음"}</p>
       </div>
 
       <button
