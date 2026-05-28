@@ -118,7 +118,10 @@ function RecommendPage({
           콘센트 필요
         </label>
 
-        <button className="primary-button" onClick={loadClassrooms}>
+        <button
+          className="primary-button search-submit-button"
+          onClick={loadClassrooms}
+        >
           검색
         </button>
       </section>

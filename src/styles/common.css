@@ -279,6 +279,11 @@ button {
   background: #1267d6;
 }
 
+.search-submit-button {
+  display: block;
+  margin: 16px 0 0 auto;
+}
+
 .ghost-button {
   min-height: 36px;
   border: 1px solid #b8d8f5;
@@ -286,6 +291,11 @@ button {
   padding: 0 12px;
   color: #1267d6;
   background: #f7fbff;
+}
+
+.ghost-button:hover {
+  border-color: #7bbcf0;
+  background: #dceeff;
 }
 
 .review-write-button {
