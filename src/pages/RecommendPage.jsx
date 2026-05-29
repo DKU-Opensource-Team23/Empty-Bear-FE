@@ -1,15 +1,29 @@
 import { useEffect, useState } from "react";
 import { getBuildings } from "../api/buildingApi";
-import { getClassrooms } from "../api/classroomApi";
+import { getRecommendedClassrooms } from "../api/recommendApi";
 import BottomNav from "../components/BottomNav";
 import ClassroomCard from "../components/ClassroomCard";
 
 function normalizeClassroom(classroom) {
+  const availableHour = classroom.availableHour ?? 0;
+  const availableMinute = classroom.availableMinute ?? 0;
+  const availableMinutes =
+    classroom.availableMinutes ?? availableHour * 60 + availableMinute;
+
   return {
     ...classroom,
+    roomName: classroom.roomName ?? classroom.classroomName,
+    availableMinutes,
     status: classroom.status ?? classroom.availabilityStatus,
     nextClassTime:
       classroom.nextClassTime ?? classroom.nextClassStartTime ?? "없음",
+  };
+}
+
+function toRecommendationTime(totalMinutes) {
+  return {
+    minAvailableHour: Math.floor(totalMinutes / 60),
+    minAvailableMinute: totalMinutes % 60,
   };
 }
 
@@ -35,10 +49,14 @@ function RecommendPage({
   const loadClassrooms = async () => {
     try {
       setIsLoading(true);
-      const response = await getClassrooms({
+      const { minAvailableHour, minAvailableMinute } =
+        toRecommendationTime(minAvailableTime);
+
+      const response = await getRecommendedClassrooms({
         buildingId,
-        minAvailableTime,
-        hasOutlet: needOutlet,
+        minAvailableHour,
+        minAvailableMinute,
+        needOutlet,
       });
       setClassrooms((response.classrooms ?? []).map(normalizeClassroom));
     } catch (error) {
@@ -118,7 +136,10 @@ function RecommendPage({
           콘센트 필요
         </label>
 
-        <button className="primary-button" onClick={loadClassrooms}>
+        <button
+          className="primary-button search-submit-button"
+          onClick={loadClassrooms}
+        >
           검색
         </button>
       </section>
