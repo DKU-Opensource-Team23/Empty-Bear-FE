@@ -19,6 +19,7 @@ function normalizeClassroom(classroom) {
     ...classroom,
     buildingName: classroom.buildingName,
     status: classroom.status ?? classroom.availabilityStatus,
+    isFavorite: classroom.isFavorite ?? false,
     nextClassTime:
       classroom.nextClassTime ?? classroom.nextClassStartTime ?? "없음",
   };
@@ -236,9 +237,10 @@ function MapPage({ favorites, onToggleFavorite, onOpenDetail, onMovePage }) {
                   <ClassroomCard
                     key={room.classroomId}
                     classroom={room}
-                    isFavorite={favorites.some(
-                      (fav) => fav.classroomId === room.classroomId
-                    )}
+                    isFavorite={
+                      room.isFavorite ||
+                      favorites.some((fav) => fav.classroomId === room.classroomId)
+                    }
                     onToggleFavorite={onToggleFavorite}
                     onOpenDetail={onOpenDetail}
                   />
