@@ -13,6 +13,13 @@ const dayLabels = {
   FRIDAY: "금",
   SATURDAY: "토",
   SUNDAY: "일",
+  MON: "월",
+  TUE: "화",
+  WED: "수",
+  THU: "목",
+  FRI: "금",
+  SAT: "토",
+  SUN: "일",
   월요일: "월",
   화요일: "화",
   수요일: "수",
@@ -29,20 +36,47 @@ const dayLabels = {
   일: "일",
 };
 
-const dayOrder = ["월", "화", "수", "목", "금", "토", "일"];
+const timetableDays = ["월", "화", "수", "목", "금"];
+const timetableStartHour = 8;
+const timetableEndHour = 18;
+const timetableRowMinutes = 30;
+const timetableRows =
+  ((timetableEndHour - timetableStartHour) * 60) / timetableRowMinutes;
+const timetableColors = [
+  "#86cfc1",
+  "#7f9ce3",
+  "#d98778",
+  "#e3c86b",
+  "#9d85d8",
+  "#e6a95f",
+  "#a8c76e",
+];
 
 function getDayLabel(dayOfWeek) {
   return dayLabels[dayOfWeek] ?? dayOfWeek ?? "기타";
 }
 
-function groupSchedulesByDay(schedules) {
-  return schedules.reduce((groups, schedule) => {
-    const dayLabel = getDayLabel(schedule.dayOfWeek);
-    return {
-      ...groups,
-      [dayLabel]: [...(groups[dayLabel] ?? []), schedule],
-    };
-  }, {});
+function parseTimeToMinutes(time) {
+  const [hour, minute = "0"] = String(time ?? "00:00").split(":");
+  return Number(hour) * 60 + Number(minute);
+}
+
+function getTimetableBlockStyle(schedule, index) {
+  const startMinutes = parseTimeToMinutes(schedule.startTime);
+  const endMinutes = parseTimeToMinutes(schedule.endTime);
+  const dayIndex = timetableDays.indexOf(getDayLabel(schedule.dayOfWeek));
+  const firstRow =
+    Math.max(0, startMinutes - timetableStartHour * 60) / timetableRowMinutes;
+  const rowSpan = Math.max(
+    1,
+    (endMinutes - startMinutes) / timetableRowMinutes
+  );
+
+  return {
+    gridColumn: `${dayIndex + 2} / ${dayIndex + 3}`,
+    gridRow: `${Math.floor(firstRow) + 2} / span ${Math.ceil(rowSpan)}`,
+    backgroundColor: timetableColors[index % timetableColors.length],
+  };
 }
 
 function ClassroomDetailPage({
@@ -58,14 +92,9 @@ function ClassroomDetailPage({
     (room) => room.classroomId === classroom.classroomId
   );
   const visibleReviews = reviews.slice(0, 2);
-  const schedulesByDay = groupSchedulesByDay(schedules);
-  const extraDays = Object.keys(schedulesByDay).filter(
-    (day) => !dayOrder.includes(day)
+  const timetableSchedules = schedules.filter((schedule) =>
+    timetableDays.includes(getDayLabel(schedule.dayOfWeek))
   );
-  const visibleDays = [
-    ...dayOrder.filter((day) => schedulesByDay[day]?.length),
-    ...extraDays,
-  ];
 
   useEffect(() => {
     async function loadDetailData() {
@@ -144,32 +173,54 @@ function ClassroomDetailPage({
         {schedules.length === 0 ? (
           <div className="empty-state">등록된 시간표가 없습니다.</div>
         ) : (
-          <div className="schedule-day-list">
-            {visibleDays.map((day) => (
-              <article key={day} className="schedule-day-card">
-                <div className="schedule-day-label">{day}</div>
-                <div className="schedule-block-list">
-                  {schedulesByDay[day]
-                    .slice()
-                    .sort((a, b) =>
-                      String(a.startTime).localeCompare(String(b.startTime))
-                    )
-                    .map((schedule) => (
-                      <div
-                        key={schedule.scheduleId}
-                        className="schedule-block"
-                      >
-                        <div className="schedule-time">
-                          {schedule.startTime} - {schedule.endTime}
-                        </div>
-                        <strong>{schedule.subjectName}</strong>
-                        {schedule.professorName && (
-                          <span>{schedule.professorName}</span>
-                        )}
-                      </div>
-                    ))}
+          <div className="weekly-timetable">
+            <div className="timetable-corner" />
+            {timetableDays.map((day) => (
+              <div key={day} className="timetable-day-header">
+                {day}
+              </div>
+            ))}
+
+            {Array.from({ length: timetableRows }).map((_, rowIndex) => {
+              const hour = timetableStartHour + Math.floor(rowIndex / 2);
+              const isHourRow = rowIndex % 2 === 0;
+
+              return (
+                <div
+                  key={`time-${rowIndex}`}
+                  className="timetable-time-label"
+                  style={{ gridRow: `${rowIndex + 2} / ${rowIndex + 3}` }}
+                >
+                  {isHourRow ? hour : ""}
                 </div>
-              </article>
+              );
+            })}
+
+            {timetableDays.map((day, dayIndex) =>
+              Array.from({ length: timetableRows }).map((_, rowIndex) => (
+                <div
+                  key={`${day}-${rowIndex}`}
+                  className="timetable-cell"
+                  style={{
+                    gridColumn: `${dayIndex + 2} / ${dayIndex + 3}`,
+                    gridRow: `${rowIndex + 2} / ${rowIndex + 3}`,
+                  }}
+                />
+              ))
+            )}
+
+            {timetableSchedules.map((schedule, index) => (
+              <div
+                key={schedule.scheduleId}
+                className="timetable-class-block"
+                style={getTimetableBlockStyle(schedule, index)}
+              >
+                <strong>{schedule.subjectName}</strong>
+                <span>
+                  {schedule.startTime} - {schedule.endTime}
+                </span>
+                {schedule.professorName && <span>{schedule.professorName}</span>}
+              </div>
             ))}
           </div>
         )}
