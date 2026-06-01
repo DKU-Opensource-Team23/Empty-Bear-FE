@@ -37,8 +37,8 @@ const dayLabels = {
 };
 
 const timetableDays = ["월", "화", "수", "목", "금"];
-const timetableStartHour = 8;
-const timetableEndHour = 18;
+const timetableStartHour = 9;
+const timetableEndHour = 22;
 const timetableRowMinutes = 30;
 const timetableRows =
   ((timetableEndHour - timetableStartHour) * 60) / timetableRowMinutes;
@@ -139,23 +139,15 @@ function ClassroomDetailPage({
         <div className="detail-review-row">
           <div className="review-preview-list">
             {visibleReviews.length === 0 ? (
-              <>
-                <p className="empty-review">리뷰가 없습니다</p>
-                <p className="empty-review">리뷰가 없습니다</p>
-              </>
+              <p className="empty-review">리뷰가 없습니다</p>
             ) : (
-              <>
-                {visibleReviews.map((review) => (
-                  <p key={review.reviewId} className="review-preview">
-                    {(review.tags ?? [])
-                      .map((tag) => tag.displayName)
-                      .join(" / ")}
-                  </p>
-                ))}
-                {visibleReviews.length === 1 && (
-                  <p className="empty-review">리뷰가 없습니다</p>
-                )}
-              </>
+              visibleReviews.map((review) => (
+                <p key={review.reviewId} className="review-preview">
+                  {(review.tags ?? [])
+                    .map((tag) => tag.displayName)
+                    .join(" / ")}
+                </p>
+              ))
             )}
           </div>
 
