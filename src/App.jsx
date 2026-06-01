@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { logout } from "./api/authApi";
-import { getClassroomDetail } from "./api/classroomApi";
+import {
+  getClassroomDetail,
+  getRecentViewedClassrooms,
+} from "./api/classroomApi";
 import { addFavorite, deleteFavorite, getFavorites } from "./api/favoriteApi";
-import { getMyPreference } from "./api/userApi";
+import { getMyInfo, getMyPreference } from "./api/userApi";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import HomePage from "./pages/HomePage";
@@ -45,13 +48,18 @@ function App() {
     setPage("home");
 
     try {
-      const [preferenceResponse, favoriteResponse] = await Promise.all([
-        getMyPreference(),
-        getFavorites(),
-      ]);
+      const [myInfoResponse, preferenceResponse, favoriteResponse, recentResponse] =
+        await Promise.all([
+          getMyInfo(),
+          getMyPreference(),
+          getFavorites(),
+          getRecentViewedClassrooms(),
+        ]);
 
+      setUser(myInfoResponse.user ?? loginUser);
       setPreference(preferenceResponse.preference);
       setFavorites(unwrapClassrooms(favoriteResponse));
+      setRecentClassrooms(unwrapClassrooms(recentResponse));
     } catch (error) {
       alert("로그인은 되었지만 사용자 정보를 불러오지 못했습니다.");
     }

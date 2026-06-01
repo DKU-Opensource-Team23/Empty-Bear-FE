@@ -23,6 +23,10 @@ export function getClassroomDetail(classroomId) {
   return apiRequest(endpoints.classrooms.detail(classroomId));
 }
 
+export function getRecentViewedClassrooms() {
+  return apiRequest(endpoints.classrooms.recentViewed);
+}
+
 export function getClassroomSchedule(classroomId) {
   return apiRequest(endpoints.classrooms.schedule(classroomId));
 }
