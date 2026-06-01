@@ -3,6 +3,7 @@ import { getBuildings } from "../api/buildingApi";
 import { getRecommendedClassrooms } from "../api/recommendApi";
 import BottomNav from "../components/BottomNav";
 import ClassroomCard from "../components/ClassroomCard";
+import { formatAvailableTime } from "../utils/timeFormat";
 
 function normalizeClassroom(classroom) {
   const availableHour = classroom.availableHour ?? 0;
@@ -107,7 +108,7 @@ function RecommendPage({
             value={minAvailableTime}
             onChange={(e) => setMinAvailableTime(Number(e.target.value))}
           />
-          {minAvailableTime}분 이상
+          {formatAvailableTime(minAvailableTime)} 이상
         </label>
 
         <div className="filter-divider" />
