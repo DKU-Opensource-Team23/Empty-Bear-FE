@@ -5,18 +5,45 @@ import {
 } from "../api/classroomApi";
 import { getReviewTags } from "../api/tagApi";
 
+function isQuietTag(tag) {
+  const code = tag.code ?? "";
+  const name = tag.displayName ?? "";
+
+  return (
+    ["QUIET", "NOISY"].includes(code) ||
+    name.includes("조용") ||
+    name.includes("시끄")
+  );
+}
+
+function isOutletTag(tag) {
+  const code = tag.code ?? "";
+  const name = tag.displayName ?? "";
+
+  return (
+    code.includes("OUTLET") ||
+    code.includes("NO_OUTLET") ||
+    code.includes("NONE") ||
+    name.includes("콘센트") ||
+    name.includes("충분") ||
+    name.includes("부족") ||
+    name.includes("없")
+  );
+}
+
 function ReviewPage({ classroom, onBack }) {
   const [reviewTags, setReviewTags] = useState([]);
   const [classroomReviews, setClassroomReviews] = useState([]);
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const quietTagIds = reviewTags
-    .filter((tag) => ["QUIET", "NOISY"].includes(tag.code))
-    .map((tag) => tag.tagId);
-  const outletTagIds = reviewTags
-    .filter((tag) => ["OUTLET_ENOUGH", "OUTLET_LACK"].includes(tag.code))
-    .map((tag) => tag.tagId);
+  const quietTags = reviewTags.filter(isQuietTag);
+  const outletTags = reviewTags.filter(isOutletTag);
+  const fallbackQuietTags = quietTags.length > 0 ? quietTags : reviewTags.slice(0, 2);
+  const fallbackOutletTags =
+    outletTags.length > 0 ? outletTags : reviewTags.slice(2);
+  const quietTagIds = fallbackQuietTags.map((tag) => tag.tagId);
+  const outletTagIds = fallbackOutletTags.map((tag) => tag.tagId);
 
   useEffect(() => {
     async function loadReviewData() {
@@ -54,10 +81,14 @@ function ReviewPage({ classroom, onBack }) {
 
     try {
       setIsSubmitting(true);
-      await createClassroomReview(classroom.classroomId, {
+      const response = await createClassroomReview(classroom.classroomId, {
         tagIds: selectedTagIds,
       });
-      alert("리뷰가 등록되었습니다.");
+
+      const reviewResponse = await getClassroomReviews(classroom.classroomId);
+      setClassroomReviews(reviewResponse.reviews ?? []);
+      setSelectedTagIds([]);
+      alert(response.message || "리뷰가 등록되었습니다.");
       onBack();
     } catch (error) {
       alert(error.message || "리뷰 등록에 실패했습니다.");
@@ -80,38 +111,34 @@ function ReviewPage({ classroom, onBack }) {
         <div className="review-question">
           <p>조용한가요?</p>
           <div className="review-choice-row">
-            {reviewTags
-              .filter((tag) => quietTagIds.includes(tag.tagId))
-              .map((tag) => (
-                <button
-                  key={tag.tagId}
-                  className={`choice-button ${
-                    selectedTagIds.includes(tag.tagId) ? "selected" : ""
-                  }`}
-                  onClick={() => selectTag(tag.tagId, quietTagIds)}
-                >
-                  {tag.displayName}
-                </button>
-              ))}
+            {fallbackQuietTags.map((tag) => (
+              <button
+                key={tag.tagId}
+                className={`choice-button ${
+                  selectedTagIds.includes(tag.tagId) ? "selected" : ""
+                }`}
+                onClick={() => selectTag(tag.tagId, quietTagIds)}
+              >
+                {tag.displayName}
+              </button>
+            ))}
           </div>
         </div>
 
         <div className="review-question">
-          <p>콘센트가 충분한가요?</p>
+          <p>콘센트 상태는 어떤가요?</p>
           <div className="review-choice-row">
-            {reviewTags
-              .filter((tag) => outletTagIds.includes(tag.tagId))
-              .map((tag) => (
-                <button
-                  key={tag.tagId}
-                  className={`choice-button ${
-                    selectedTagIds.includes(tag.tagId) ? "selected" : ""
-                  }`}
-                  onClick={() => selectTag(tag.tagId, outletTagIds)}
-                >
-                  {tag.displayName}
-                </button>
-              ))}
+            {fallbackOutletTags.map((tag) => (
+              <button
+                key={tag.tagId}
+                className={`choice-button ${
+                  selectedTagIds.includes(tag.tagId) ? "selected" : ""
+                }`}
+                onClick={() => selectTag(tag.tagId, outletTagIds)}
+              >
+                {tag.displayName}
+              </button>
+            ))}
           </div>
         </div>
 

@@ -1,3 +1,5 @@
+import { endpoints } from "./endpoints";
+
 const DEFAULT_API_BASE_URL = "";
 
 export const API_BASE_URL =
@@ -27,6 +29,32 @@ export function saveTokens({ accessToken, refreshToken }) {
 export function clearTokens() {
   localStorage.removeItem(ACCESS_TOKEN_KEY);
   localStorage.removeItem(REFRESH_TOKEN_KEY);
+}
+
+async function requestNewAccessToken() {
+  const refreshToken = getRefreshToken();
+
+  if (!refreshToken) {
+    return null;
+  }
+
+  const response = await fetch(buildUrl(endpoints.auth.reissue), {
+    method: "POST",
+    body: JSON.stringify({ refreshToken }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const data = await parseResponse(response);
+
+  if (!response.ok) {
+    clearTokens();
+    return null;
+  }
+
+  saveTokens(data);
+  return data.accessToken ?? null;
 }
 
 function buildUrl(path, query) {
@@ -63,7 +91,8 @@ export async function apiRequest(path, options = {}) {
   const token = getAccessToken();
   const hasBody = body !== undefined;
 
-  const response = await fetch(buildUrl(path, query), {
+  const requestUrl = buildUrl(path, query);
+  const requestOptions = {
     ...fetchOptions,
     body: hasBody ? JSON.stringify(body) : undefined,
     headers: {
@@ -71,7 +100,23 @@ export async function apiRequest(path, options = {}) {
       ...(auth && token ? { Authorization: `Bearer ${token}` } : {}),
       ...headers,
     },
-  });
+  };
+
+  let response = await fetch(requestUrl, requestOptions);
+
+  if (auth && response.status === 401) {
+    const newAccessToken = await requestNewAccessToken();
+
+    if (newAccessToken) {
+      response = await fetch(requestUrl, {
+        ...requestOptions,
+        headers: {
+          ...requestOptions.headers,
+          Authorization: `Bearer ${newAccessToken}`,
+        },
+      });
+    }
+  }
 
   const data = await parseResponse(response);
 

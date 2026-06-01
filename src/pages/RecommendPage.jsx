@@ -13,9 +13,11 @@ function normalizeClassroom(classroom) {
 
   return {
     ...classroom,
+    classroomId: classroom.classroomId,
     roomName: classroom.roomName ?? classroom.classroomName,
     availableMinutes,
     status: classroom.status ?? classroom.availabilityStatus,
+    isFavorite: classroom.isFavorite ?? false,
     nextClassTime:
       classroom.nextClassTime ?? classroom.nextClassStartTime ?? "없음",
   };
@@ -46,9 +48,11 @@ function RecommendPage({
   const [buildings, setBuildings] = useState([]);
   const [classrooms, setClassrooms] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
 
   const loadClassrooms = async () => {
     try {
+      setHasSearched(true);
       setIsLoading(true);
       const { minAvailableHour, minAvailableMinute } =
         toRecommendationTime(minAvailableTime);
@@ -59,7 +63,11 @@ function RecommendPage({
         minAvailableMinute,
         needOutlet,
       });
-      setClassrooms((response.classrooms ?? []).map(normalizeClassroom));
+      setClassrooms(
+        (response.classrooms ?? [])
+          .map(normalizeClassroom)
+          .sort((a, b) => (b.availableMinutes ?? 0) - (a.availableMinutes ?? 0))
+      );
     } catch (error) {
       alert(error.message || "강의실 목록을 불러오지 못했습니다.");
     } finally {
@@ -78,8 +86,6 @@ function RecommendPage({
     }
 
     loadBuildings();
-    loadClassrooms();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const resetFilters = () => {
@@ -145,27 +151,30 @@ function RecommendPage({
         </button>
       </section>
 
-      <section>
-        <h2>검색 결과</h2>
+      {hasSearched && (
+        <section>
+          <h2>검색 결과</h2>
 
-        {isLoading ? (
-          <div className="empty-state">강의실을 불러오는 중입니다.</div>
-        ) : classrooms.length === 0 ? (
-          <div className="empty-state">조건에 맞는 강의실이 없습니다.</div>
-        ) : (
-          classrooms.map((room) => (
-            <ClassroomCard
-              key={room.classroomId}
-              classroom={room}
-              isFavorite={favorites.some(
-                (fav) => fav.classroomId === room.classroomId
-              )}
-              onToggleFavorite={onToggleFavorite}
-              onOpenDetail={onOpenDetail}
-            />
-          ))
-        )}
-      </section>
+          {isLoading ? (
+            <div className="empty-state">강의실을 불러오는 중입니다.</div>
+          ) : classrooms.length === 0 ? (
+            <div className="empty-state">조건에 맞는 강의실이 없습니다.</div>
+          ) : (
+            classrooms.map((room) => (
+              <ClassroomCard
+                key={room.classroomId}
+                classroom={room}
+                isFavorite={
+                  room.isFavorite ||
+                  favorites.some((fav) => fav.classroomId === room.classroomId)
+                }
+                onToggleFavorite={onToggleFavorite}
+                onOpenDetail={onOpenDetail}
+              />
+            ))
+          )}
+        </section>
+      )}
 
       <BottomNav currentPage="recommend" onMovePage={onMovePage} />
     </main>
