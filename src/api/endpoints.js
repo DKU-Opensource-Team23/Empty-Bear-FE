@@ -14,6 +14,7 @@ export const endpoints = {
   },
   classrooms: {
     list: "/api/classrooms",
+    recentViewed: "/api/classrooms/recent-viewed",
     detail: (classroomId) => `/api/classrooms/${classroomId}`,
     schedule: (classroomId) => `/api/classrooms/${classroomId}/schedule`,
     reviews: (classroomId) => `/api/classrooms/${classroomId}/reviews`,

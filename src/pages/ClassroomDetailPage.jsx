@@ -102,7 +102,10 @@ function ClassroomDetailPage({
                 <span>
                   {schedule.startTime} - {schedule.endTime}
                 </span>
-                <span>{schedule.subjectName}</span>
+                <span>
+                  {schedule.subjectName}
+                  {schedule.professorName ? ` / ${schedule.professorName}` : ""}
+                </span>
               </div>
             ))}
           </div>
