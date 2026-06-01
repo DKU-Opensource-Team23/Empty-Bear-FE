@@ -109,6 +109,9 @@ function MapPage({ favorites, onToggleFavorite, onOpenDetail, onMovePage }) {
   };
 
   const svgUrl = selectedBuilding?.floorPlans?.[String(selectedFloor)];
+  const selectedFloorLabel =
+    floors.find((floor) => floor.floorValue === selectedFloor)?.floorLabel ??
+    `${selectedFloor}층`;
 
   return (
     <NavermapsProvider ncpKeyId="r6eww9eh1v">
@@ -192,7 +195,7 @@ function MapPage({ favorites, onToggleFavorite, onOpenDetail, onMovePage }) {
                 />
               ) : (
                 <p style={{ color: "#888", margin: 0 }}>
-                  {selectedBuilding.buildingName} {selectedFloor}층 평면도 준비 중
+                  {selectedBuilding.buildingName} {selectedFloorLabel} 평면도 준비 중
                 </p>
               )}
             </section>
@@ -225,7 +228,7 @@ function MapPage({ favorites, onToggleFavorite, onOpenDetail, onMovePage }) {
 
             <section>
               <h2>
-                {selectedBuilding.buildingName} {selectedFloor}층 강의실
+                {selectedBuilding.buildingName} {selectedFloorLabel} 강의실
               </h2>
 
               {floorClassrooms.length === 0 ? (

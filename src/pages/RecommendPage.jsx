@@ -88,6 +88,12 @@ function RecommendPage({
     loadBuildings();
   }, []);
 
+  useEffect(() => {
+    setMinAvailableTime(preference?.minAvailableTime ?? 30);
+    setBuildingId(preference?.preferredBuilding?.buildingId ?? "");
+    setNeedOutlet(preference?.needOutlet ?? false);
+  }, [preference]);
+
   const resetFilters = () => {
     setMinAvailableTime(preference?.minAvailableTime ?? 30);
     setBuildingId(preference?.preferredBuilding?.buildingId ?? "");

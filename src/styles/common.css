@@ -32,6 +32,7 @@ button {
 
 .auth-page input,
 .auth-page select,
+.preference-modal select,
 .filter-box select {
   width: 100%;
   padding: 12px;
@@ -117,9 +118,17 @@ button {
   border-radius: 50%;
   color: white;
   background: #1267d6;
-  font-size: 11px;
-  font-weight: bold;
   cursor: pointer;
+}
+
+.profile-edit-button svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .profile-edit-button input {
@@ -130,14 +139,82 @@ button {
   margin: 8px 0;
 }
 
-.logout-button {
+.profile-action-group {
   position: absolute;
   top: 14px;
   right: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.profile-action-group .ghost-button {
+  min-width: 86px;
 }
 
 .recent-card h2 {
   margin-top: 0;
+}
+
+.preference-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.preference-modal h2 {
+  margin: 0;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 86px 20px 24px;
+  background: rgba(10, 24, 38, 0.48);
+}
+
+.preference-modal {
+  width: min(100%, 370px);
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  border: 1px solid #cfe5fb;
+  border-radius: 22px;
+  padding: 18px;
+  background: white;
+  box-shadow: 0 24px 60px rgba(10, 24, 38, 0.28);
+}
+
+.modal-close-button {
+  min-height: 34px;
+  border: 1px solid #b8d8f5;
+  border-radius: 999px;
+  padding: 0 12px;
+  color: #1267d6;
+  background: #f7fbff;
+}
+
+.preference-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.preference-summary span {
+  padding: 7px 10px;
+  border-radius: 999px;
+  color: #1267d6;
+  background: #eef7ff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.preference-search-button {
+  align-self: flex-end;
 }
 
 .recent-room {
