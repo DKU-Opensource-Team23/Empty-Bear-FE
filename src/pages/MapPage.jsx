@@ -25,11 +25,22 @@ function normalizeClassroom(classroom) {
   };
 }
 
-function MapPage({ favorites, onToggleFavorite, onOpenDetail, onMovePage }) {
+function MapPage({
+  favorites,
+  onToggleFavorite,
+  onOpenDetail,
+  onMovePage,
+  mapView,
+  onUpdateMapView,
+}) {
   const [buildings, setBuildings] = useState([]);
-  const [selectedBuilding, setSelectedBuilding] = useState(null);
+  const [selectedBuilding, setSelectedBuilding] = useState(
+    mapView?.selectedBuilding ?? null
+  );
   const [floors, setFloors] = useState([]);
-  const [selectedFloor, setSelectedFloor] = useState(1);
+  const [selectedFloor, setSelectedFloor] = useState(
+    mapView?.selectedFloor ?? 1
+  );
   const [floorPlan, setFloorPlan] = useState(null);
   const [floorClassrooms, setFloorClassrooms] = useState([]);
 
@@ -60,15 +71,29 @@ function MapPage({ favorites, onToggleFavorite, onOpenDetail, onMovePage }) {
 
         setFloors(nextFloors);
 
+        const savedFloor = mapView?.selectedFloor;
+        const hasSavedFloor = nextFloors.some(
+          (floor) => floor.floorValue === savedFloor
+        );
         const hasFirstFloor = nextFloors.some((floor) => floor.floorValue === 1);
-        setSelectedFloor(hasFirstFloor ? 1 : nextFloors[0]?.floorValue ?? 1);
+        const nextSelectedFloor = hasSavedFloor
+          ? savedFloor
+          : hasFirstFloor
+          ? 1
+          : nextFloors[0]?.floorValue ?? 1;
+
+        setSelectedFloor(nextSelectedFloor);
+        onUpdateMapView?.({
+          selectedBuilding,
+          selectedFloor: nextSelectedFloor,
+        });
       } catch (error) {
         alert(error.message || "층 목록을 불러오지 못했습니다.");
       }
     }
 
     loadBuildingData();
-  }, [selectedBuilding]);
+  }, [mapView?.selectedFloor, onUpdateMapView, selectedBuilding]);
 
   useEffect(() => {
     if (!selectedBuilding) {
@@ -106,6 +131,32 @@ function MapPage({ favorites, onToggleFavorite, onOpenDetail, onMovePage }) {
 
     map.setCenter(defaultDankookUnivCoords);
     map.setZoom(16);
+  };
+
+  const handleSelectBuilding = (building) => {
+    setSelectedBuilding(building);
+    setSelectedFloor(1);
+    onUpdateMapView?.({
+      selectedBuilding: building,
+      selectedFloor: 1,
+    });
+  };
+
+  const handleSelectFloor = (floorValue) => {
+    setSelectedFloor(floorValue);
+    onUpdateMapView?.({
+      selectedBuilding,
+      selectedFloor: floorValue,
+    });
+  };
+
+  const handleBackToCampusMap = () => {
+    setSelectedBuilding(null);
+    setSelectedFloor(1);
+    onUpdateMapView?.({
+      selectedBuilding: null,
+      selectedFloor: 1,
+    });
   };
 
   const svgUrl = selectedBuilding?.floorPlans?.[String(selectedFloor)];
@@ -154,7 +205,7 @@ function MapPage({ favorites, onToggleFavorite, onOpenDetail, onMovePage }) {
                           lng: Number(building.longitude),
                         }}
                         title={building.buildingName}
-                        onClick={() => setSelectedBuilding(building)}
+                        onClick={() => handleSelectBuilding(building)}
                       />
                     )
                 )}
@@ -169,7 +220,7 @@ function MapPage({ favorites, onToggleFavorite, onOpenDetail, onMovePage }) {
           <>
             <button
               className="back-button"
-              onClick={() => setSelectedBuilding(null)}
+              onClick={handleBackToCampusMap}
             >
               ← 전체 학교 지도
             </button>
@@ -219,7 +270,7 @@ function MapPage({ favorites, onToggleFavorite, onOpenDetail, onMovePage }) {
                 <button
                   key={floor.floorValue}
                   className={selectedFloor === floor.floorValue ? "active" : ""}
-                  onClick={() => setSelectedFloor(floor.floorValue)}
+                  onClick={() => handleSelectFloor(floor.floorValue)}
                 >
                   {floor.floorLabel}
                 </button>

@@ -66,6 +66,10 @@ function App() {
   const [selectedClassroom, setSelectedClassroom] = useState(null);
   const [favorites, setFavorites] = useState([]);
   const [recentClassrooms, setRecentClassrooms] = useState([]);
+  const [mapView, setMapView] = useState({
+    selectedBuilding: null,
+    selectedFloor: 1,
+  });
   const [isBootstrapping, setIsBootstrapping] = useState(true);
   const [isPreferenceModalOpen, setIsPreferenceModalOpen] = useState(false);
 
@@ -255,6 +259,8 @@ function App() {
           onToggleFavorite={toggleFavorite}
           onOpenDetail={openClassroomDetail}
           onMovePage={movePage}
+          mapView={mapView}
+          onUpdateMapView={setMapView}
         />
       )}
 
