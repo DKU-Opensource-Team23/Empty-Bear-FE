@@ -165,7 +165,12 @@ function ClassroomDetailPage({
         {schedules.length === 0 ? (
           <div className="empty-state">등록된 시간표가 없습니다.</div>
         ) : (
-          <div className="weekly-timetable">
+          <div
+            className="weekly-timetable"
+            style={{
+              gridTemplateRows: `30px repeat(${timetableRows}, 28px)`,
+            }}
+          >
             <div className="timetable-corner" />
             {timetableDays.map((day) => (
               <div key={day} className="timetable-day-header">
