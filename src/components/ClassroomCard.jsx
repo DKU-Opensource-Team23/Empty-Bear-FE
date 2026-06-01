@@ -1,3 +1,5 @@
+import { formatAvailableTime } from "../utils/timeFormat";
+
 const statusLabel = {
   AVAILABLE_LONG: "사용 가능",
   AVAILABLE_SOON: "곧 수업",
@@ -24,7 +26,7 @@ function ClassroomCard({
             {statusLabel[classroom.status] ?? "상태 확인"}
           </span>
         </div>
-        <p>사용 가능 시간: {classroom.availableMinutes ?? 0}분</p>
+        <p>사용 가능 시간: {formatAvailableTime(classroom.availableMinutes)}</p>
         <p>콘센트: {classroom.hasOutlet ? "있음" : "없음"}</p>
         <p>다음 수업: {classroom.nextClassTime ?? "없음"}</p>
       </div>

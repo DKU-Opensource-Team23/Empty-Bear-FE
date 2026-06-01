@@ -3,6 +3,47 @@ import {
   getClassroomReviews,
   getClassroomSchedule,
 } from "../api/classroomApi";
+import { formatAvailableTime } from "../utils/timeFormat";
+
+const dayLabels = {
+  MONDAY: "월",
+  TUESDAY: "화",
+  WEDNESDAY: "수",
+  THURSDAY: "목",
+  FRIDAY: "금",
+  SATURDAY: "토",
+  SUNDAY: "일",
+  월요일: "월",
+  화요일: "화",
+  수요일: "수",
+  목요일: "목",
+  금요일: "금",
+  토요일: "토",
+  일요일: "일",
+  월: "월",
+  화: "화",
+  수: "수",
+  목: "목",
+  금: "금",
+  토: "토",
+  일: "일",
+};
+
+const dayOrder = ["월", "화", "수", "목", "금", "토", "일"];
+
+function getDayLabel(dayOfWeek) {
+  return dayLabels[dayOfWeek] ?? dayOfWeek ?? "기타";
+}
+
+function groupSchedulesByDay(schedules) {
+  return schedules.reduce((groups, schedule) => {
+    const dayLabel = getDayLabel(schedule.dayOfWeek);
+    return {
+      ...groups,
+      [dayLabel]: [...(groups[dayLabel] ?? []), schedule],
+    };
+  }, {});
+}
 
 function ClassroomDetailPage({
   classroom,
@@ -17,6 +58,14 @@ function ClassroomDetailPage({
     (room) => room.classroomId === classroom.classroomId
   );
   const visibleReviews = reviews.slice(0, 2);
+  const schedulesByDay = groupSchedulesByDay(schedules);
+  const extraDays = Object.keys(schedulesByDay).filter(
+    (day) => !dayOrder.includes(day)
+  );
+  const visibleDays = [
+    ...dayOrder.filter((day) => schedulesByDay[day]?.length),
+    ...extraDays,
+  ];
 
   useEffect(() => {
     async function loadDetailData() {
@@ -54,7 +103,7 @@ function ClassroomDetailPage({
         <h1>
           {classroom.buildingName} {classroom.roomName}
         </h1>
-        <p>사용 가능 시간: {classroom.availableMinutes ?? 0}분</p>
+        <p>사용 가능 시간: {formatAvailableTime(classroom.availableMinutes)}</p>
         <p>콘센트 여부: {classroom.hasOutlet ? "있음" : "없음"}</p>
         <p>다음 수업: {classroom.nextClassTime ?? "없음"}</p>
 
@@ -95,18 +144,32 @@ function ClassroomDetailPage({
         {schedules.length === 0 ? (
           <div className="empty-state">등록된 시간표가 없습니다.</div>
         ) : (
-          <div className="schedule-list">
-            {schedules.map((schedule) => (
-              <div key={schedule.scheduleId} className="schedule-item">
-                <strong>{schedule.dayOfWeek}</strong>
-                <span>
-                  {schedule.startTime} - {schedule.endTime}
-                </span>
-                <span>
-                  {schedule.subjectName}
-                  {schedule.professorName ? ` / ${schedule.professorName}` : ""}
-                </span>
-              </div>
+          <div className="schedule-day-list">
+            {visibleDays.map((day) => (
+              <article key={day} className="schedule-day-card">
+                <div className="schedule-day-label">{day}</div>
+                <div className="schedule-block-list">
+                  {schedulesByDay[day]
+                    .slice()
+                    .sort((a, b) =>
+                      String(a.startTime).localeCompare(String(b.startTime))
+                    )
+                    .map((schedule) => (
+                      <div
+                        key={schedule.scheduleId}
+                        className="schedule-block"
+                      >
+                        <div className="schedule-time">
+                          {schedule.startTime} - {schedule.endTime}
+                        </div>
+                        <strong>{schedule.subjectName}</strong>
+                        {schedule.professorName && (
+                          <span>{schedule.professorName}</span>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              </article>
             ))}
           </div>
         )}

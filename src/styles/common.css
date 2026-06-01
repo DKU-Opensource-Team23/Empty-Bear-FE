@@ -378,12 +378,36 @@ button {
 .bottom-nav button {
   width: 64px;
   height: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   border: 1px solid #b8d8f5;
   border-radius: 50%;
   background: #fff;
   color: #17324d;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1.2;
+}
+
+.bottom-nav svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bottom-nav button:first-child svg path,
+.bottom-nav .active:first-child svg path {
+  fill: currentColor;
+}
+
+.bottom-nav span {
+  display: block;
 }
 
 .bottom-nav .active {
@@ -526,7 +550,8 @@ button {
   text-align: center;
 }
 
-.schedule-list {
+.schedule-list,
+.schedule-day-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -541,6 +566,58 @@ button {
   border: 1px solid #cfe5fb;
   border-radius: 14px;
   background: #f7fbff;
+}
+
+.schedule-day-card {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #cfe5fb;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 8px 18px rgba(25, 99, 168, 0.08);
+}
+
+.schedule-day-label {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  color: white;
+  background: #1267d6;
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.schedule-block-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.schedule-block {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border-left: 5px solid #4b74df;
+  background: #eef6ff;
+}
+
+.schedule-block strong,
+.schedule-block span {
+  display: block;
+}
+
+.schedule-block strong {
+  margin-top: 4px;
+  color: #17324d;
+}
+
+.schedule-block span,
+.schedule-time {
+  color: #5d7690;
+  font-size: 13px;
 }
 
 @media (min-width: 431px) {
