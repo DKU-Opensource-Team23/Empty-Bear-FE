@@ -4,6 +4,7 @@ function HomePage({
   user,
   onUpdateUser,
   onLogout,
+  onOpenPreference,
   recentClassrooms,
   onOpenDetail,
   onMovePage,
@@ -37,8 +38,11 @@ function HomePage({
             <div className="default-avatar" aria-label="기본 사용자 이미지" />
           )}
 
-          <label className="profile-edit-button">
-            수정
+          <label className="profile-edit-button" aria-label="프로필 사진 수정">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-3-3L5 17v3Z" />
+              <path d="m14 7 3 3" />
+            </svg>
             <input
               type="file"
               accept="image/*"
@@ -59,9 +63,17 @@ function HomePage({
           </p>
         </div>
 
-        <button className="ghost-button logout-button" onClick={onLogout}>
-          로그아웃
-        </button>
+        <div className="profile-action-group">
+          <button className="ghost-button" onClick={onLogout}>
+            로그아웃
+          </button>
+          <button
+            className="ghost-button"
+            onClick={onOpenPreference}
+          >
+            선호 설정
+          </button>
+        </div>
       </section>
 
       <section className="home-card recent-card">

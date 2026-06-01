@@ -15,6 +15,7 @@ import MapPage from "./pages/MapPage";
 import FavoritesPage from "./pages/FavoritesPage";
 import ReviewPage from "./pages/ReviewPage";
 import ClassroomDetailPage from "./pages/ClassroomDetailPage";
+import PreferencePage from "./pages/PreferencePage";
 
 function normalizeClassroom(classroom) {
   if (!classroom) {
@@ -66,6 +67,7 @@ function App() {
   const [favorites, setFavorites] = useState([]);
   const [recentClassrooms, setRecentClassrooms] = useState([]);
   const [isBootstrapping, setIsBootstrapping] = useState(true);
+  const [isPreferenceModalOpen, setIsPreferenceModalOpen] = useState(false);
 
   const movePage = (nextPage) => {
     setPage(nextPage);
@@ -221,8 +223,18 @@ function App() {
           user={user}
           onUpdateUser={setUser}
           onLogout={handleLogout}
+          onOpenPreference={() => setIsPreferenceModalOpen(true)}
           recentClassrooms={recentClassrooms}
           onOpenDetail={openClassroomDetail}
+          onMovePage={movePage}
+        />
+      )}
+
+      {isPreferenceModalOpen && (
+        <PreferencePage
+          preference={preference}
+          onUpdatePreference={setPreference}
+          onClose={() => setIsPreferenceModalOpen(false)}
           onMovePage={movePage}
         />
       )}
