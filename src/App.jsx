@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { logout } from "./api/authApi";
+import { clearTokens, getAccessToken } from "./api/client";
 import {
   getClassroomDetail,
   getRecentViewedClassrooms,
@@ -26,6 +27,10 @@ function normalizeClassroom(classroom) {
     buildingName: classroom.buildingName ?? classroom.building?.buildingName,
     floor: classroom.floor ?? classroom.floorValue,
     status: classroom.status ?? classroom.availabilityStatus,
+    isFavorite: classroom.isFavorite ?? false,
+    availableMinutes:
+      classroom.availableMinutes ??
+      (classroom.availableHour ?? 0) * 60 + (classroom.availableMinute ?? 0),
     nextClassTime:
       classroom.nextClassTime ?? classroom.nextClassStartTime ?? "없음",
   };
@@ -35,31 +40,99 @@ function unwrapClassrooms(response) {
   return (response?.classrooms ?? []).map(normalizeClassroom).filter(Boolean);
 }
 
+const pagePaths = {
+  login: "/login",
+  signup: "/signup",
+  home: "/",
+  recommend: "/search",
+  map: "/map",
+  favorites: "/favorite",
+};
+
+function getPageFromPath(pathname) {
+  const matchedPage = Object.entries(pagePaths).find(
+    ([, path]) => path === pathname
+  );
+
+  return matchedPage?.[0] ?? "home";
+}
+
 function App() {
   const [user, setUser] = useState(null);
   const [preference, setPreference] = useState(null);
-  const [page, setPage] = useState("login");
+  const [page, setPage] = useState(() => getPageFromPath(window.location.pathname));
+  const [previousPage, setPreviousPage] = useState("home");
   const [selectedClassroom, setSelectedClassroom] = useState(null);
   const [favorites, setFavorites] = useState([]);
   const [recentClassrooms, setRecentClassrooms] = useState([]);
+  const [isBootstrapping, setIsBootstrapping] = useState(true);
+
+  const movePage = (nextPage) => {
+    setPage(nextPage);
+
+    const nextPath = pagePaths[nextPage];
+    if (nextPath && window.location.pathname !== nextPath) {
+      window.history.pushState({ page: nextPage }, "", nextPath);
+    }
+  };
+
+  const loadUserData = async (fallbackUser = null) => {
+    const [myInfoResponse, preferenceResponse, favoriteResponse, recentResponse] =
+      await Promise.all([
+        getMyInfo(),
+        getMyPreference(),
+        getFavorites(),
+        getRecentViewedClassrooms(),
+      ]);
+
+    setUser(myInfoResponse.user ?? fallbackUser);
+    setPreference(preferenceResponse.preference);
+    setFavorites(unwrapClassrooms(favoriteResponse));
+    setRecentClassrooms(unwrapClassrooms(recentResponse));
+  };
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setPage(getPageFromPath(window.location.pathname));
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, []);
+
+  useEffect(() => {
+    async function restoreLogin() {
+      if (!getAccessToken()) {
+        setIsBootstrapping(false);
+        return;
+      }
+
+      try {
+        await loadUserData();
+        const restoredPage = getPageFromPath(window.location.pathname);
+        if (restoredPage === "login" || restoredPage === "signup") {
+          movePage("home");
+        }
+      } catch {
+        clearTokens();
+        movePage("login");
+      } finally {
+        setIsBootstrapping(false);
+      }
+    }
+
+    restoreLogin();
+  }, []);
 
   const finishLogin = async (loginUser) => {
     setUser(loginUser);
-    setPage("home");
+    movePage("home");
 
     try {
-      const [myInfoResponse, preferenceResponse, favoriteResponse, recentResponse] =
-        await Promise.all([
-          getMyInfo(),
-          getMyPreference(),
-          getFavorites(),
-          getRecentViewedClassrooms(),
-        ]);
-
-      setUser(myInfoResponse.user ?? loginUser);
-      setPreference(preferenceResponse.preference);
-      setFavorites(unwrapClassrooms(favoriteResponse));
-      setRecentClassrooms(unwrapClassrooms(recentResponse));
+      await loadUserData(loginUser);
     } catch (error) {
       alert("로그인은 되었지만 사용자 정보를 불러오지 못했습니다.");
     }
@@ -71,12 +144,13 @@ function App() {
     } catch {
       // The screen should still return to login even if the server logout fails.
     } finally {
+      clearTokens();
       setUser(null);
       setPreference(null);
       setFavorites([]);
       setRecentClassrooms([]);
       setSelectedClassroom(null);
-      setPage("login");
+      movePage("login");
     }
   };
 
@@ -92,6 +166,7 @@ function App() {
         );
         return [classroomDetail, ...filtered].slice(0, 5);
       });
+      setPreviousPage(page);
       setPage("detail");
     } catch (error) {
       alert(error.message || "강의실 상세 정보를 불러오지 못했습니다.");
@@ -113,20 +188,27 @@ function App() {
       }
 
       await addFavorite(classroom.classroomId);
-      setFavorites((prev) => [...prev, normalizeClassroom(classroom)]);
+      setFavorites((prev) => [
+        ...prev,
+        normalizeClassroom({ ...classroom, isFavorite: true }),
+      ]);
     } catch (error) {
       alert(error.message || "즐겨찾기 처리에 실패했습니다.");
     }
   };
 
+  if (isBootstrapping) {
+    return <main className="page loading-page">로그인 정보를 확인하는 중입니다.</main>;
+  }
+
   if (!user) {
     if (page === "signup") {
-      return <SignupPage onMoveToLogin={() => setPage("login")} />;
+      return <SignupPage onMoveToLogin={() => movePage("login")} />;
     }
 
     return (
       <LoginPage
-        onMoveToSignup={() => setPage("signup")}
+        onMoveToSignup={() => movePage("signup")}
         onLogin={(loginUser) => finishLogin(loginUser)}
       />
     );
@@ -141,7 +223,7 @@ function App() {
           onLogout={handleLogout}
           recentClassrooms={recentClassrooms}
           onOpenDetail={openClassroomDetail}
-          onMovePage={setPage}
+          onMovePage={movePage}
         />
       )}
 
@@ -151,7 +233,7 @@ function App() {
           favorites={favorites}
           onToggleFavorite={toggleFavorite}
           onOpenDetail={openClassroomDetail}
-          onMovePage={setPage}
+          onMovePage={movePage}
         />
       )}
 
@@ -160,7 +242,7 @@ function App() {
           favorites={favorites}
           onToggleFavorite={toggleFavorite}
           onOpenDetail={openClassroomDetail}
-          onMovePage={setPage}
+          onMovePage={movePage}
         />
       )}
 
@@ -169,7 +251,7 @@ function App() {
           favorites={favorites}
           onToggleFavorite={toggleFavorite}
           onOpenDetail={openClassroomDetail}
-          onMovePage={setPage}
+          onMovePage={movePage}
         />
       )}
 
@@ -186,7 +268,7 @@ function App() {
           favorites={favorites}
           onToggleFavorite={toggleFavorite}
           onMoveReview={() => setPage("review")}
-          onBack={() => setPage("home")}
+          onBack={() => movePage(previousPage)}
         />
       )}
     </>
