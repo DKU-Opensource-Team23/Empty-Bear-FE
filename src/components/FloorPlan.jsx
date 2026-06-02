@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 
 const STATUS_COLORS = {
+  AVAILABLE_LONG: "#12b76a",
+  AVAILABLE_SHORT: "#12b76a",
   available: "#12b76a",
-  soon:      "#fdb022",
-  busy:      "#f04438",
+  SOON: "#fdb022",
+  soon: "#fdb022",
+  IN_USE: "#f04438",
+  busy: "#f04438",
 };
 
-function FloorPlanSvg({ svgUrl, classrooms }) {
+function FloorPlanSvg({ svgUrl, room }) {
   const [svgContent, setSvgContent] = useState(null);
   const [loading, setLoading]       = useState(true);
   const [error, setError]           = useState(false);
@@ -35,7 +39,7 @@ function FloorPlanSvg({ svgUrl, classrooms }) {
         svgEl.setAttribute("width",  "100%");
         svgEl.setAttribute("height", "100%");
 
-        const roomMap = new Map(classrooms.map((c) => [String(c.roomName).trim(), c.status]));
+        const roomMap = new Map(room.map((c) => [String(c.roomName).trim(), c.status]));
 
         const cellGroups = Array.from(svgEl.querySelectorAll("[data-cell-id]"));
 
@@ -58,7 +62,7 @@ function FloorPlanSvg({ svgUrl, classrooms }) {
           if (!rect) return;
 
           rect.setAttribute("fill",         color);
-          rect.setAttribute("fill-opacity", "0.72");
+          rect.setAttribute("fill-opacity", "0.45");
         });
 
         const serializer = new XMLSerializer();
@@ -69,23 +73,7 @@ function FloorPlanSvg({ svgUrl, classrooms }) {
         setError(true);
         setLoading(false);
       });
-  }, [svgUrl, classrooms]);
-
-  if (loading) {
-    return (
-      <div style={centerStyle}>
-        <span style={hintStyle}>평면도 불러오는 중…</span>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div style={centerStyle}>
-        <span style={hintStyle}>평면도 준비 중</span>
-      </div>
-    );
-  }
+  }, [svgUrl, room]);
 
   return (
     <div
