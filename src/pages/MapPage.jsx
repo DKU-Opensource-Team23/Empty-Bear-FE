@@ -44,7 +44,21 @@ function MapPage({
   const [floorPlan, setFloorPlan] = useState(null);
   const [floorClassrooms, setFloorClassrooms] = useState([]);
 
+  const hasNaverMaps = typeof window !== "undefined" && window.naver && window.naver.maps;
   const defaultDankookUnivCoords = { lat: 37.320573, lng: 127.1276137 };
+  let dankookBounds = null;
+  let swPosition = null;
+  let nePosition = null;
+
+  if (hasNaverMaps) {
+    dankookBounds = new window.naver.maps.LatLngBounds(
+      new window.naver.maps.LatLng(37.317391, 127.123725), // 남서쪽
+      new window.naver.maps.LatLng(37.323755, 127.131502) // 북동쪽
+    );
+    swPosition = dankookBounds.getSW();
+    nePosition = dankookBounds.getNE();
+    dankookBounds = new window.naver.maps.LatLngBounds(swPosition, nePosition);
+  }
 
   useEffect(() => {
     async function loadBuildings() {
@@ -128,9 +142,6 @@ function MapPage({
     if (!map) {
       return;
     }
-
-    map.setCenter(defaultDankookUnivCoords);
-    map.setZoom(16);
   };
 
   const handleSelectBuilding = (building) => {
@@ -185,14 +196,12 @@ function MapPage({
             >
               <NaverMap
                 defaultCenter={defaultDankookUnivCoords}
+                defaultZoom={16}
+                maxZoom={18}
+                minZoom={15}
+                maxBounds={dankookBounds}
                 onLoad={handleMapLoad}
                 style={{ width: "360px", height: "350px" }}
-                draggable={false}
-                pinchZoom={false}
-                keyboardShortcuts={false}
-                zoomControl={false}
-                scrollWheel={false}
-                disableDoubleClickZoom={true}
               >
                 {buildings.map(
                   (building) =>
