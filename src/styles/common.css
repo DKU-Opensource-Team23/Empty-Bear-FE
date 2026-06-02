@@ -157,6 +157,12 @@ button {
   margin-top: 0;
 }
 
+.recent-room-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .preference-modal {
   display: flex;
   flex-direction: column;
@@ -218,13 +224,65 @@ button {
 }
 
 .recent-room {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   width: 100%;
-  margin-bottom: 8px;
-  padding: 12px;
+  min-height: 58px;
+  padding: 10px 12px;
   border: 1px solid #cfe5fb;
   border-radius: 14px;
   background: #f7fbff;
+  text-align: left;
+}
+
+.recent-room-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.recent-room-main strong {
+  color: #17324d;
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.recent-room-main small {
+  color: #6f8daa;
+  font-size: 12px;
+}
+
+.recent-room-status {
+  flex: 0 0 auto;
+  padding: 6px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.recent-room-status.available {
+  color: #087443;
+  background: #ddf7eb;
+}
+
+.recent-room-status.in-use {
+  color: #b42318;
+  background: #fff5f2;
+}
+
+.recent-room-status.unavailable {
+  color: #64748b;
+  background: #edf2f7;
+}
+
+.recent-room-count {
+  margin: 10px 0 0;
+  color: #6f8daa;
+  font-size: 12px;
+  text-align: right;
 }
 
 .classroom-card {
