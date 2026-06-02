@@ -3,7 +3,7 @@ import { getBuildings } from "../api/buildingApi";
 import { getRecommendedClassrooms } from "../api/recommendApi";
 import BottomNav from "../components/BottomNav";
 import ClassroomCard from "../components/ClassroomCard";
-import { formatAvailableTime } from "../utils/timeFormat";
+import { formatAvailableTime, formatClassTime } from "../utils/timeFormat";
 
 function normalizeClassroom(classroom) {
   const availableHour = classroom.availableHour ?? 0;
@@ -18,8 +18,9 @@ function normalizeClassroom(classroom) {
     availableMinutes,
     status: classroom.status ?? classroom.availabilityStatus,
     isFavorite: classroom.isFavorite ?? false,
-    nextClassTime:
-      classroom.nextClassTime ?? classroom.nextClassStartTime ?? "없음",
+    nextClassTime: formatClassTime(
+      classroom.nextClassTime ?? classroom.nextClassStartTime
+    ),
   };
 }
 

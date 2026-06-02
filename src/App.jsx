@@ -16,6 +16,7 @@ import FavoritesPage from "./pages/FavoritesPage";
 import ReviewPage from "./pages/ReviewPage";
 import ClassroomDetailPage from "./pages/ClassroomDetailPage";
 import PreferencePage from "./pages/PreferencePage";
+import { formatClassTime } from "./utils/timeFormat";
 
 function normalizeClassroom(classroom) {
   if (!classroom) {
@@ -32,8 +33,9 @@ function normalizeClassroom(classroom) {
     availableMinutes:
       classroom.availableMinutes ??
       (classroom.availableHour ?? 0) * 60 + (classroom.availableMinute ?? 0),
-    nextClassTime:
-      classroom.nextClassTime ?? classroom.nextClassStartTime ?? "없음",
+    nextClassTime: formatClassTime(
+      classroom.nextClassTime ?? classroom.nextClassStartTime
+    ),
   };
 }
 

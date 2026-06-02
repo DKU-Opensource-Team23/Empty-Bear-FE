@@ -13,6 +13,7 @@ import {
   NaverMap,
   NavermapsProvider,
 } from "react-naver-maps";
+import { formatClassTime } from "../utils/timeFormat";
 
 function normalizeClassroom(classroom) {
   return {
@@ -20,8 +21,9 @@ function normalizeClassroom(classroom) {
     buildingName: classroom.buildingName,
     status: classroom.status ?? classroom.availabilityStatus,
     isFavorite: classroom.isFavorite ?? false,
-    nextClassTime:
-      classroom.nextClassTime ?? classroom.nextClassStartTime ?? "없음",
+    nextClassTime: formatClassTime(
+      classroom.nextClassTime ?? classroom.nextClassStartTime
+    ),
   };
 }
 
