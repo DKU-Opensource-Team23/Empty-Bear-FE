@@ -6,11 +6,6 @@ const STATUS_COLORS = {
   busy:      "#f04438",
 };
 
-/**
- * @param {string} svgUrl
- * @param {Array}  classrooms
- */
-
 function FloorPlanSvg({ svgUrl, classrooms }) {
   const [svgContent, setSvgContent] = useState(null);
   const [loading, setLoading]       = useState(true);
@@ -40,23 +35,24 @@ function FloorPlanSvg({ svgUrl, classrooms }) {
         svgEl.setAttribute("width",  "100%");
         svgEl.setAttribute("height", "100%");
 
-        /* ── roomName → status 빠른 탐색용 Map ── */
-        const roomMap = new Map(classrooms.map((c) => [c.roomName, c.status]));
+        const roomMap = new Map(classrooms.map((c) => [String(c.roomName).trim(), c.status]));
 
-        const textElements = Array.from(svgEl.querySelectorAll("text"));
+        const cellGroups = Array.from(svgEl.querySelectorAll("[data-cell-id]"));
 
-        textElements.forEach((textEl) => {
-          const label = textEl.textContent?.trim();
+        cellGroups.forEach((cell) => {
+          const textEl = cell.querySelector("text");
+          if (!textEl) return;
+
+          const rawText = textEl.textContent ?? "";
+          const label = rawText.replace(/\s+/g, "").trim();
           if (!label) return;
 
-          const status = roomMap.get(label);
+          let status = roomMap.get(label);
+
           if (!status) return;
 
           const color = STATUS_COLORS[status];
           if (!color) return;
-
-          const cell = textEl.closest("[data-cell-id]");
-          if (!cell) return;
 
           const rect = cell.querySelector("rect");
           if (!rect) return;
@@ -99,7 +95,10 @@ function FloorPlanSvg({ svgUrl, classrooms }) {
   );
 }
 
-const centerStyle = { width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" };
-const hintStyle   = { color: "#9fb3c8", fontSize: 13 };
+const centerStyle = {
+  width: "100%", height: "100%",
+  display: "flex", alignItems: "center", justifyContent: "center"
+};
+const hintStyle = { color: "#9fb3c8", fontSize: 13 };
 
 export default FloorPlanSvg;
