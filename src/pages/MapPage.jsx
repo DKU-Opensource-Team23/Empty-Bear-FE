@@ -13,6 +13,7 @@ import {
   NaverMap,
   NavermapsProvider,
 } from "react-naver-maps";
+import FloorPlanSvg from "../components/FloorPlan";
 import { formatClassTime } from "../utils/timeFormat";
 
 function normalizeClassroom(classroom) {
@@ -246,10 +247,9 @@ function MapPage({
               </div>
               <div className="floor-plan-frame">
               {floorPlan?.imageUrl ? (
-                <img
-                  
-                  src={floorPlan.imageUrl}
-                  alt={`${selectedBuilding.buildingName} ${floorPlan.floorLabel}`}
+                <FloorPlanSvg
+                  svgUrl={floorPlan.imageUrl}
+                  room={floorClassrooms}
                 />
               ) : (
                 <p>
