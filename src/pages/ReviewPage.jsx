@@ -103,9 +103,10 @@ function ReviewPage({ classroom, onBack }) {
         ← 뒤로가기
       </button>
 
-      <h1>
-        {classroom.buildingName} {classroom.roomName} 리뷰 작성
-      </h1>
+      <div className="review-page-header">
+        <span>{classroom.buildingName}</span>
+        <h1>{classroom.roomName} 리뷰 작성</h1>
+      </div>
 
       <section className="review-box review-form-box">
         <div className="review-question">
@@ -160,9 +161,13 @@ function ReviewPage({ classroom, onBack }) {
           <p className="empty-review">아직 작성된 리뷰가 없습니다.</p>
         ) : (
           classroomReviews.map((review) => (
-            <p key={review.reviewId} className="review-list-item">
-              {(review.tags ?? []).map((tag) => tag.displayName).join(" / ")}
-            </p>
+            <div key={review.reviewId} className="review-list-item">
+              {(review.tags ?? []).map((tag) => (
+                <span key={tag.tagId ?? tag.displayName}>
+                  {tag.displayName}
+                </span>
+              ))}
+            </div>
           ))
         )}
       </section>

@@ -96,6 +96,9 @@ function ClassroomDetailPage({
     timetableDays.includes(getDayLabel(schedule.dayOfWeek))
   );
   const isInUse = classroom.status === "IN_USE";
+  const availableText = isInUse
+    ? "현재 수업중"
+    : formatAvailableTime(classroom.availableMinutes);
 
   useEffect(() => {
     async function loadDetailData() {
@@ -122,25 +125,35 @@ function ClassroomDetailPage({
       </button>
 
       <section className="detail-box">
-        <button
-          className={`detail-favorite-button ${isFavorite ? "active" : ""}`}
-          onClick={() => onToggleFavorite(classroom)}
-          aria-label={isFavorite ? "즐겨찾기 해제" : "즐겨찾기 추가"}
-        >
-          {isFavorite ? "★" : "☆"}
-        </button>
+        <div className="detail-header">
+          <div>
+            <span>{classroom.buildingName}</span>
+            <h1>{classroom.roomName}</h1>
+          </div>
+          <button
+            className={`detail-favorite-button ${isFavorite ? "active" : ""}`}
+            onClick={() => onToggleFavorite(classroom)}
+            aria-label={isFavorite ? "즐겨찾기 해제" : "즐겨찾기 추가"}
+          >
+            {isFavorite ? "★" : "☆"}
+          </button>
+        </div>
 
-        <h1>
-          {classroom.buildingName} {classroom.roomName}
-        </h1>
-        <p>
-          사용 가능 시간:{" "}
-          {isInUse
-            ? "현재 수업중"
-            : formatAvailableTime(classroom.availableMinutes)}
-        </p>
-        <p>콘센트 여부: {classroom.hasOutlet ? "있음" : "없음"}</p>
-        <p>다음 수업: {classroom.nextClassTime ?? "없음"}</p>
+        <div className={`detail-availability ${isInUse ? "in-use" : ""}`}>
+          <span>사용 가능 시간</span>
+          <strong>{availableText}</strong>
+        </div>
+
+        <div className="detail-meta-grid">
+          <div className="detail-meta-chip">
+            <span>콘센트</span>
+            <strong>{classroom.hasOutlet ? "있음" : "없음"}</strong>
+          </div>
+          <div className="detail-meta-chip">
+            <span>다음 수업</span>
+            <strong>{classroom.nextClassTime ?? "없음"}</strong>
+          </div>
+        </div>
 
         <div className="detail-review-row">
           <div className="review-preview-list">
@@ -148,11 +161,13 @@ function ClassroomDetailPage({
               <p className="empty-review">리뷰가 없습니다</p>
             ) : (
               visibleReviews.map((review) => (
-                <p key={review.reviewId} className="review-preview">
-                  {(review.tags ?? [])
-                    .map((tag) => tag.displayName)
-                    .join(" / ")}
-                </p>
+                <div key={review.reviewId} className="review-preview">
+                  {(review.tags ?? []).map((tag) => (
+                    <span key={tag.tagId ?? tag.displayName}>
+                      {tag.displayName}
+                    </span>
+                  ))}
+                </div>
               ))
             )}
           </div>

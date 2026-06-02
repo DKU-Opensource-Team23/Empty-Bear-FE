@@ -239,31 +239,24 @@ function MapPage({
               ← 전체 학교 지도
             </button>
 
-            <section
-              className="map-box"
-              style={{
-                width: "390px",
-                height: "200px",
-                borderRadius: "8px",
-                overflow: "hidden",
-                backgroundColor: "#f5f5f5",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
+            <section className="floor-plan-card">
+              <div className="floor-plan-card-header">
+                <span>{selectedBuilding.buildingName}</span>
+                <strong>{selectedFloorLabel}</strong>
+              </div>
+              <div className="floor-plan-frame">
               {floorPlan?.imageUrl ? (
                 <img
                   
                   src={floorPlan.imageUrl}
                   alt={`${selectedBuilding.buildingName} ${floorPlan.floorLabel}`}
-                  style={{ width: "100%", height: "100%", objectFit: "contain" }}
                 />
               ) : (
-                <p style={{ color: "#888", margin: 0 }}>
+                <p>
                   {selectedBuilding.buildingName} {selectedFloorLabel} 평면도 준비 중
                 </p>
               )}
+              </div>
             </section>
 
             <div className="status-legend">
