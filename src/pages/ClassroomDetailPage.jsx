@@ -95,6 +95,7 @@ function ClassroomDetailPage({
   const timetableSchedules = schedules.filter((schedule) =>
     timetableDays.includes(getDayLabel(schedule.dayOfWeek))
   );
+  const isInUse = classroom.status === "IN_USE";
 
   useEffect(() => {
     async function loadDetailData() {
@@ -132,7 +133,12 @@ function ClassroomDetailPage({
         <h1>
           {classroom.buildingName} {classroom.roomName}
         </h1>
-        <p>사용 가능 시간: {formatAvailableTime(classroom.availableMinutes)}</p>
+        <p>
+          사용 가능 시간:{" "}
+          {isInUse
+            ? "현재 수업중"
+            : formatAvailableTime(classroom.availableMinutes)}
+        </p>
         <p>콘센트 여부: {classroom.hasOutlet ? "있음" : "없음"}</p>
         <p>다음 수업: {classroom.nextClassTime ?? "없음"}</p>
 
