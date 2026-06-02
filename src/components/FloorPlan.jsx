@@ -62,7 +62,7 @@ function FloorPlanSvg({ svgUrl, room }) {
           if (!rect) return;
 
           rect.setAttribute("fill",         color);
-          rect.setAttribute("fill-opacity", "0.72");
+          rect.setAttribute("fill-opacity", "0.45");
         });
 
         const serializer = new XMLSerializer();
