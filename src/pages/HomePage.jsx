@@ -1,26 +1,4 @@
 import BottomNav from "../components/BottomNav";
-import { formatAvailableTime } from "../utils/timeFormat";
-
-function getRecentRoomStatus(room) {
-  if (room.status === "IN_USE") {
-    return {
-      label: "현재 수업중",
-      className: "in-use",
-    };
-  }
-
-  if (room.status === "UNAVAILABLE") {
-    return {
-      label: "사용 불가",
-      className: "unavailable",
-    };
-  }
-
-  return {
-    label: formatAvailableTime(room.availableMinutes),
-    className: "available",
-  };
-}
 
 function HomePage({
   user,
@@ -45,7 +23,6 @@ function HomePage({
       profileImageUrl: imageUrl,
     }));
   };
-  const visibleRecentClassrooms = recentClassrooms.slice(0, 3);
 
   return (
     <main className="page">
@@ -105,36 +82,15 @@ function HomePage({
         {recentClassrooms.length === 0 ? (
           <div className="empty-state">아직 조회한 강의실이 없습니다.</div>
         ) : (
-          <>
-            <div className="recent-room-list">
-              {visibleRecentClassrooms.map((room) => {
-                const status = getRecentRoomStatus(room);
-
-                return (
-                  <button
-                    key={room.classroomId}
-                    className="recent-room"
-                    onClick={() => onOpenDetail(room)}
-                  >
-                    <span className="recent-room-main">
-                      <strong>
-                        {room.buildingName} {room.roomName}
-                      </strong>
-                      <small>다음 수업 {room.nextClassTime ?? "없음"}</small>
-                    </span>
-                    <span className={`recent-room-status ${status.className}`}>
-                      {status.label}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-            {recentClassrooms.length > visibleRecentClassrooms.length && (
-              <p className="recent-room-count">
-                최근 조회 {visibleRecentClassrooms.length}개 표시 중
-              </p>
-            )}
-          </>
+          recentClassrooms.map((room) => (
+            <button
+              key={room.classroomId}
+              className="recent-room"
+              onClick={() => onOpenDetail(room)}
+            >
+              {room.buildingName} {room.roomName}
+            </button>
+          ))
         )}
       </section>
 
