@@ -115,6 +115,9 @@ function MapPage({
     }
 
     async function loadFloorData() {
+      setFloorPlan(null);
+      setFloorClassrooms([]);
+      
       try {
         const [planResponse, statusResponse] = await Promise.all([
           getFloorPlan(selectedBuilding.buildingId, selectedFloor),
@@ -197,11 +200,11 @@ function MapPage({
               <NaverMap
                 defaultCenter={defaultDankookUnivCoords}
                 defaultZoom={16}
+                minZoom={16}
                 maxZoom={18}
-                minZoom={15}
                 maxBounds={dankookBounds}
                 onLoad={handleMapLoad}
-                style={{ width: "360px", height: "350px" }}
+                style={{ width: "100%", height: "100%" }}
               >
                 {buildings.map(
                   (building) =>
@@ -249,6 +252,7 @@ function MapPage({
             >
               {floorPlan?.imageUrl ? (
                 <img
+                  
                   src={floorPlan.imageUrl}
                   alt={`${selectedBuilding.buildingName} ${floorPlan.floorLabel}`}
                   style={{ width: "100%", height: "100%", objectFit: "contain" }}
