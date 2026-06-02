@@ -188,7 +188,7 @@ function MapPage({
 
         {!selectedBuilding ? (
           <section className="campus-map-box">
-            <p className="map-title">전체적인 학교 구조 평면도</p>
+            <p className="map-title">전체 단국대학교 죽전캠퍼스 지도 </p>
 
             <MapContainer
               style={{
@@ -201,6 +201,7 @@ function MapPage({
               }}
             >
               <NaverMap
+              key="dankook-map"
                 defaultCenter={defaultDankookUnivCoords}
                 defaultZoom={16}
                 minZoom={16}
@@ -208,6 +209,8 @@ function MapPage({
                 maxBounds={dankookBounds}
                 onLoad={handleMapLoad}
                 style={{ width: "100%", height: "100%" }}
+                scaleControl={true}
+                logoControl={true}
               >
                 {buildings.map(
                   (building) =>
