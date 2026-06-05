@@ -1,0 +1,31 @@
+﻿.auth-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+}
+
+.auth-page input,
+.auth-page select,
+.preference-modal select,
+.filter-box select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #b8d8f5;
+  border-radius: 12px;
+  background: white;
+}
+
+.auth-page button:not(.text-button) {
+  min-height: 46px;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  background: #1267d6;
+}
+
+.text-button {
+  border: none;
+  background: none;
+  color: #1267d6;
+}

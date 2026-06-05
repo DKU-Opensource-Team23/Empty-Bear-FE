@@ -1,0 +1,151 @@
+﻿.profile-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.profile-image-wrap {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.profile-image,
+.default-avatar {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+}
+
+.profile-image {
+  object-fit: cover;
+  border: 3px solid #bfe2ff;
+}
+
+.default-avatar {
+  display: grid;
+  place-items: center;
+  border: 3px solid #bfe2ff;
+  background: #e7f4ff;
+  font-size: 42px;
+}
+
+.profile-edit-button {
+  position: absolute;
+  right: -6px;
+  bottom: -4px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: white;
+  background: #1267d6;
+  cursor: pointer;
+}
+
+.profile-edit-button svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.profile-edit-button input {
+  display: none;
+}
+
+.profile-info p {
+  margin: 8px 0;
+}
+
+.profile-action-group {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.profile-action-group .ghost-button {
+  min-width: 86px;
+}
+
+.recent-card h2 {
+  margin-top: 0;
+}
+
+.recent-room-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+
+.recent-room {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 58px;
+  padding: 10px 12px;
+  border: 1px solid #cfe5fb;
+  border-radius: 14px;
+  background: #f7fbff;
+  text-align: left;
+}
+
+.recent-room-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.recent-room-main strong {
+  color: #17324d;
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.recent-room-main small {
+  color: #6f8daa;
+  font-size: 12px;
+}
+
+.recent-room-status {
+  flex: 0 0 auto;
+  padding: 6px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.recent-room-status.available {
+  color: #087443;
+  background: #ddf7eb;
+}
+
+.recent-room-status.in-use {
+  color: #b42318;
+  background: #fff5f2;
+}
+
+.recent-room-status.unavailable {
+  color: #64748b;
+  background: #edf2f7;
+}
+
+.recent-room-count {
+  margin: 10px 0 0;
+  color: #6f8daa;
+  font-size: 12px;
+  text-align: right;
+}
+

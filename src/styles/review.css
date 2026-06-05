@@ -1,0 +1,92 @@
+﻿.review-write-button {
+  flex: 0 0 auto;
+}
+
+.review-page-header {
+  margin-bottom: 16px;
+}
+
+.review-page-header span {
+  display: block;
+  margin-bottom: 4px;
+  color: #5f7f9c;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.review-page-header h1 {
+  margin: 0;
+  color: #17324d;
+  font-size: 26px;
+  line-height: 1.25;
+}
+
+.review-form-box {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.review-question {
+  padding: 14px;
+  border: 1px solid #d8eafb;
+  border-radius: 16px;
+  background: #f8fbff;
+}
+
+.review-question p {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #17324d;
+  font-weight: 800;
+}
+
+.review-choice-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.choice-button {
+  min-height: 42px;
+  border: 1px solid #b8d8f5;
+  border-radius: 12px;
+  padding: 0 14px;
+  color: #17324d;
+  background: #f7fbff;
+  font-weight: 700;
+}
+
+.choice-button.selected {
+  color: white;
+  border-color: #1267d6;
+  background: #1267d6;
+}
+
+.review-submit-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.review-list-box {
+  border: 1px solid #cfe5fb;
+  padding: 16px;
+  border-radius: 18px;
+  background: white;
+  box-shadow: 0 10px 24px rgba(25, 99, 168, 0.08);
+}
+
+.review-list-box h2 {
+  margin-top: 0;
+}
+
+.review-list-item {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 0 0 10px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #f7fbff;
+}
+

@@ -1,0 +1,107 @@
+﻿.timetable {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  min-height: 180px;
+  border: 1px solid #ccc;
+}
+
+.timetable div {
+  border-right: 1px solid #ccc;
+  padding: 8px;
+  text-align: center;
+}
+
+.schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.schedule-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.4fr;
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #cfe5fb;
+  border-radius: 14px;
+  background: #f7fbff;
+}
+
+.weekly-timetable {
+  position: relative;
+  display: grid;
+  grid-template-columns: 34px repeat(5, minmax(54px, 1fr));
+  grid-template-rows: 30px repeat(20, 28px);
+  border: 1px solid #cfe5fb;
+  border-radius: 18px;
+  background: white;
+  overflow: hidden;
+  box-shadow: 0 10px 24px rgba(25, 99, 168, 0.08);
+}
+
+.timetable-corner,
+.timetable-day-header,
+.timetable-time-label,
+.timetable-cell {
+  border-right: 1px solid #e6eef7;
+  border-bottom: 1px solid #e6eef7;
+}
+
+.timetable-corner {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+  background: #f7fbff;
+}
+
+.timetable-day-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5d7690;
+  background: #f7fbff;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.timetable-time-label {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 2px;
+  color: #7f97ad;
+  background: #fff;
+  font-size: 12px;
+}
+
+.timetable-cell {
+  min-width: 0;
+  background: #fff;
+}
+
+.timetable-class-block {
+  z-index: 1;
+  margin: 1px;
+  padding: 7px 5px;
+  border-radius: 7px;
+  color: white;
+  overflow: hidden;
+  box-shadow: inset 0 -10px 18px rgba(23, 50, 77, 0.08);
+}
+
+.timetable-class-block strong,
+.timetable-class-block span {
+  display: block;
+}
+
+.timetable-class-block strong {
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.timetable-class-block span {
+  margin-top: 2px;
+  font-size: 10px;
+  line-height: 1.2;
+  opacity: 0.92;
+}
