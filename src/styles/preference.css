@@ -1,0 +1,60 @@
+﻿.preference-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.preference-modal h2 {
+  margin: 0;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 86px 20px 24px;
+  background: rgba(10, 24, 38, 0.48);
+}
+
+.preference-modal {
+  width: min(100%, 370px);
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  border: 1px solid #cfe5fb;
+  border-radius: 22px;
+  padding: 18px;
+  background: white;
+  box-shadow: 0 24px 60px rgba(10, 24, 38, 0.28);
+}
+
+.modal-close-button {
+  min-height: 34px;
+  border: 1px solid #b8d8f5;
+  border-radius: 999px;
+  padding: 0 12px;
+  color: #1267d6;
+  background: #f7fbff;
+}
+
+.preference-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.preference-summary span {
+  padding: 7px 10px;
+  border-radius: 999px;
+  color: #1267d6;
+  background: #eef7ff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.preference-search-button {
+  align-self: flex-end;
+}
+
