@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import {
-  getClassroomReviews,
-  getClassroomSchedule,
-} from "../api/classroomApi";
+import { getClassroomSchedule } from "../api/classroomApi";
+import { summarizeReviewTags } from "../utils/reviewSummary";
 import { formatAvailableTime } from "../utils/timeFormat";
+import useClassroomReviews from "../utils/useClassroomReviews";
 
 const dayLabels = {
   MONDAY: "월",
@@ -86,32 +85,27 @@ function ClassroomDetailPage({
   onMoveReview,
   onBack,
 }) {
-  const [reviews, setReviews] = useState([]);
   const [schedules, setSchedules] = useState([]);
+  const { reviews } = useClassroomReviews(classroom.classroomId);
   const isFavorite = favorites.some(
     (room) => room.classroomId === classroom.classroomId
   );
-  const visibleReviews = reviews.slice(0, 2);
+  const reviewTagSummary = summarizeReviewTags(reviews);
   const timetableSchedules = schedules.filter((schedule) =>
     timetableDays.includes(getDayLabel(schedule.dayOfWeek))
   );
   const isInUse = classroom.status === "IN_USE";
   const availableText = isInUse
-    ? "현재 수업중"
+    ? "현재 수업 중"
     : formatAvailableTime(classroom.availableMinutes);
 
   useEffect(() => {
     async function loadDetailData() {
       try {
-        const [reviewResponse, scheduleResponse] = await Promise.all([
-          getClassroomReviews(classroom.classroomId, { limit: 2 }),
-          getClassroomSchedule(classroom.classroomId),
-        ]);
-
-        setReviews(reviewResponse.reviews ?? []);
+        const scheduleResponse = await getClassroomSchedule(classroom.classroomId);
         setSchedules(scheduleResponse.weeklySchedule ?? []);
       } catch (error) {
-        alert(error.message || "강의실 부가 정보를 불러오지 못했습니다.");
+        alert(error.message || "강의실 상세 정보를 불러오지 못했습니다.");
       }
     }
 
@@ -156,18 +150,14 @@ function ClassroomDetailPage({
         </div>
 
         <div className="detail-review-row">
-          <div className="review-preview-list">
-            {visibleReviews.length === 0 ? (
-              <p className="empty-review">리뷰가 없습니다</p>
+          <div className="review-summary-list">
+            {reviewTagSummary.length === 0 ? (
+              <p className="empty-review">리뷰가 없습니다.</p>
             ) : (
-              visibleReviews.map((review) => (
-                <div key={review.reviewId} className="review-preview">
-                  {(review.tags ?? []).map((tag) => (
-                    <span key={tag.tagId ?? tag.displayName}>
-                      {tag.displayName}
-                    </span>
-                  ))}
-                </div>
+              reviewTagSummary.map((tag) => (
+                <span key={tag.key} className="review-summary-chip">
+                  {tag.displayName} +{tag.count}
+                </span>
               ))
             )}
           </div>
@@ -176,7 +166,7 @@ function ClassroomDetailPage({
             className="primary-button review-write-button"
             onClick={onMoveReview}
           >
-            리뷰 작성
+            리뷰 전체 보기
           </button>
         </div>
       </section>

@@ -21,6 +21,16 @@
   line-height: 1.25;
 }
 
+.review-my-box h2,
+.review-list-box h2 {
+  margin: 0;
+}
+
+.review-my-box .page-title-row,
+.review-list-box h2 {
+  margin-bottom: 18px;
+}
+
 .review-form-box {
   display: flex;
   flex-direction: column;
@@ -65,6 +75,7 @@
 
 .review-submit-row {
   display: flex;
+  gap: 8px;
   justify-content: flex-end;
 }
 
@@ -83,10 +94,49 @@
 .review-list-item {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 7px;
-  margin: 0 0 10px;
-  padding: 12px;
+  margin: 0 0 14px;
+  padding: 16px;
   border-radius: 12px;
   background: #f7fbff;
+}
+
+.review-list-item:last-child {
+  margin-bottom: 0;
+}
+
+.review-author-name {
+  width: 100%;
+  color: #17324d;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.my-review-item {
+  margin-top: 18px;
+}
+
+.danger-button {
+  border-color: #f1c0c0;
+  color: #c53939;
+  background: #fff4f4;
+}
+
+.danger-button:hover {
+  border-color: #ef9b9b;
+  background: #ffe9e9;
+}
+
+.review-write-modal {
+  gap: 18px;
+}
+
+.review-modal-caption {
+  display: block;
+  margin-bottom: 4px;
+  color: #5f7f9c;
+  font-size: 13px;
+  font-weight: 700;
 }
 
