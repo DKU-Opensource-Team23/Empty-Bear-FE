@@ -4,6 +4,12 @@ const TOAST_DURATION = 3200;
 
 const ToastContext = createContext(null);
 
+const toastIcons = {
+  success: "✓",
+  error: "!",
+  info: "i",
+};
+
 function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);
   const timeoutIdsRef = useRef(new Map());
@@ -49,7 +55,12 @@ function ToastProvider({ children }) {
       <div className="toast-viewport" aria-live="polite" aria-atomic="true">
         {toasts.map((toast) => (
           <div key={toast.id} className={`toast toast-${toast.type}`} role="status">
-            <span>{toast.message}</span>
+            <div className="toast-content">
+              <span className={`toast-icon toast-icon-${toast.type}`}>
+                {toastIcons[toast.type] ?? toastIcons.info}
+              </span>
+              <span className="toast-message">{toast.message}</span>
+            </div>
             <button
               className="toast-close-button"
               onClick={() => dismissToast(toast.id)}

@@ -89,12 +89,11 @@ function SignupPage({ onMoveToLogin }) {
       const nextErrors = { ...prev, [name]: "" };
 
       if (name === "password" || name === "passwordCheck") {
-        if (
-          (name === "password" ? value : form.password) &&
-          (name === "passwordCheck" ? value : form.passwordCheck) &&
-          (name === "password" ? value : form.password) !==
-            (name === "passwordCheck" ? value : form.passwordCheck)
-        ) {
+        const nextPassword = name === "password" ? value : form.password;
+        const nextPasswordCheck =
+          name === "passwordCheck" ? value : form.passwordCheck;
+
+        if (nextPasswordCheck && nextPassword !== nextPasswordCheck) {
           nextErrors.passwordCheck = "비밀번호가 일치하지 않습니다.";
         } else {
           nextErrors.passwordCheck = "";
@@ -103,11 +102,9 @@ function SignupPage({ onMoveToLogin }) {
 
       if (name === "studentNumber") {
         nextErrors.studentNumber =
-          value && /^\d{8}$/.test(value)
+          value === "" || /^\d{8}$/.test(value)
             ? ""
-            : prev.studentNumber === "학번은 8자리 숫자여야 합니다."
-              ? "학번은 8자리 숫자여야 합니다."
-              : "";
+            : "학번은 8자리 숫자여야 합니다.";
       }
 
       return nextErrors;
@@ -154,9 +151,13 @@ function SignupPage({ onMoveToLogin }) {
       <h1>회원가입</h1>
 
       <div className="auth-field">
+        <label className="auth-label" htmlFor="signup-login-id">
+          아이디
+        </label>
         <input
+          id="signup-login-id"
           name="loginId"
-          placeholder="아이디"
+          placeholder="아이디 입력"
           value={form.loginId}
           onChange={handleChange}
           className={errors.loginId ? "input-error" : ""}
@@ -165,10 +166,14 @@ function SignupPage({ onMoveToLogin }) {
       </div>
 
       <div className="auth-field">
+        <label className="auth-label" htmlFor="signup-password">
+          비밀번호
+        </label>
         <input
+          id="signup-password"
           name="password"
           type="password"
-          placeholder="비밀번호"
+          placeholder="비밀번호 입력"
           value={form.password}
           onChange={handleChange}
           className={errors.password ? "input-error" : ""}
@@ -177,10 +182,14 @@ function SignupPage({ onMoveToLogin }) {
       </div>
 
       <div className="auth-field">
+        <label className="auth-label" htmlFor="signup-password-check">
+          비밀번호 확인
+        </label>
         <input
+          id="signup-password-check"
           name="passwordCheck"
           type="password"
-          placeholder="비밀번호 확인"
+          placeholder="비밀번호 확인 입력"
           value={form.passwordCheck}
           onChange={handleChange}
           className={errors.passwordCheck ? "input-error" : ""}
@@ -191,9 +200,13 @@ function SignupPage({ onMoveToLogin }) {
       </div>
 
       <div className="auth-field">
+        <label className="auth-label" htmlFor="signup-nickname">
+          닉네임
+        </label>
         <input
+          id="signup-nickname"
           name="nickname"
-          placeholder="닉네임"
+          placeholder="닉네임 입력"
           value={form.nickname}
           onChange={handleChange}
           className={errors.nickname ? "input-error" : ""}
@@ -202,9 +215,13 @@ function SignupPage({ onMoveToLogin }) {
       </div>
 
       <div className="auth-field">
+        <label className="auth-label" htmlFor="signup-student-number">
+          학번
+        </label>
         <input
+          id="signup-student-number"
           name="studentNumber"
-          placeholder="학번"
+          placeholder="학번 입력"
           value={form.studentNumber}
           onChange={handleChange}
           className={errors.studentNumber ? "input-error" : ""}
@@ -215,9 +232,13 @@ function SignupPage({ onMoveToLogin }) {
       </div>
 
       <div className="auth-field">
+        <label className="auth-label" htmlFor="signup-department">
+          학과
+        </label>
         <input
+          id="signup-department"
           name="department"
-          placeholder="학과"
+          placeholder="학과 입력"
           value={form.department}
           onChange={handleChange}
           className={errors.department ? "input-error" : ""}

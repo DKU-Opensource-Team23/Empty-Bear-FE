@@ -11,6 +11,13 @@
   gap: 6px;
 }
 
+.auth-label {
+  color: #36506b;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
 .auth-page input,
 .auth-page select,
 .preference-modal select,
