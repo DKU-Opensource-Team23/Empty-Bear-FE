@@ -6,16 +6,18 @@ import {
   getRecentViewedClassrooms,
 } from "./api/classroomApi";
 import { addFavorite, deleteFavorite, getFavorites } from "./api/favoriteApi";
+import MessageModal from "./components/MessageModal";
+import ToastProvider, { useToast } from "./components/ToastProvider";
 import { getMyInfo, getMyPreference } from "./api/userApi";
-import LoginPage from "./pages/LoginPage";
-import SignupPage from "./pages/SignupPage";
-import HomePage from "./pages/HomePage";
-import RecommendPage from "./pages/RecommendPage";
-import MapPage from "./pages/MapPage";
 import FavoritesPage from "./pages/FavoritesPage";
-import ReviewPage from "./pages/ReviewPage";
+import HomePage from "./pages/HomePage";
 import ClassroomDetailPage from "./pages/ClassroomDetailPage";
+import LoginPage from "./pages/LoginPage";
+import MapPage from "./pages/MapPage";
 import PreferencePage from "./pages/PreferencePage";
+import RecommendPage from "./pages/RecommendPage";
+import ReviewPage from "./pages/ReviewPage";
+import SignupPage from "./pages/SignupPage";
 import { formatClassTime } from "./utils/timeFormat";
 
 function normalizeClassroom(classroom) {
@@ -60,7 +62,8 @@ function getPageFromPath(pathname) {
   return matchedPage?.[0] ?? "home";
 }
 
-function App() {
+function AppContent() {
+  const { showToast } = useToast();
   const [user, setUser] = useState(null);
   const [preference, setPreference] = useState(null);
   const [page, setPage] = useState(() => getPageFromPath(window.location.pathname));
@@ -74,6 +77,7 @@ function App() {
   });
   const [isBootstrapping, setIsBootstrapping] = useState(true);
   const [isPreferenceModalOpen, setIsPreferenceModalOpen] = useState(false);
+  const [pendingFavoriteRemoval, setPendingFavoriteRemoval] = useState(null);
 
   const movePage = (nextPage) => {
     setPage(nextPage);
@@ -142,7 +146,10 @@ function App() {
     try {
       await loadUserData(loginUser);
     } catch (error) {
-      alert("로그인은 되었지만 사용자 정보를 불러오지 못했습니다.");
+      showToast(
+        error.message || "로그인은 되었지만 사용자 정보를 불러오지 못했습니다.",
+        "error"
+      );
     }
   };
 
@@ -177,7 +184,7 @@ function App() {
       setPreviousPage(page);
       setPage("detail");
     } catch (error) {
-      alert(error.message || "강의실 상세 정보를 불러오지 못했습니다.");
+      showToast(error.message || "강의실 상세 정보를 불러오지 못했습니다.", "error");
     }
   };
 
@@ -186,22 +193,38 @@ function App() {
       (room) => room.classroomId === classroom.classroomId
     );
 
-    try {
-      if (alreadyExists) {
-        await deleteFavorite(classroom.classroomId);
-        setFavorites((prev) =>
-          prev.filter((room) => room.classroomId !== classroom.classroomId)
-        );
-        return;
-      }
+    if (alreadyExists) {
+      setPendingFavoriteRemoval(classroom);
+      return;
+    }
 
+    try {
       await addFavorite(classroom.classroomId);
       setFavorites((prev) => [
         ...prev,
         normalizeClassroom({ ...classroom, isFavorite: true }),
       ]);
+      showToast("즐겨찾기에 추가되었습니다.", "success");
     } catch (error) {
-      alert(error.message || "즐겨찾기 처리에 실패했습니다.");
+      showToast(error.message || "즐겨찾기 처리에 실패했습니다.", "error");
+    }
+  };
+
+  const handleConfirmFavoriteRemoval = async () => {
+    if (!pendingFavoriteRemoval) {
+      return;
+    }
+
+    try {
+      await deleteFavorite(pendingFavoriteRemoval.classroomId);
+      setFavorites((prev) =>
+        prev.filter(
+          (room) => room.classroomId !== pendingFavoriteRemoval.classroomId
+        )
+      );
+      setPendingFavoriteRemoval(null);
+    } catch (error) {
+      showToast(error.message || "즐겨찾기 처리에 실패했습니다.", "error");
     }
   };
 
@@ -276,10 +299,7 @@ function App() {
       )}
 
       {page === "review" && selectedClassroom && (
-        <ReviewPage
-          classroom={selectedClassroom}
-          onBack={() => setPage("detail")}
-        />
+        <ReviewPage classroom={selectedClassroom} onBack={() => setPage("detail")} />
       )}
 
       {page === "detail" && selectedClassroom && (
@@ -291,7 +311,25 @@ function App() {
           onBack={() => movePage(previousPage)}
         />
       )}
+
+      <MessageModal
+        isOpen={Boolean(pendingFavoriteRemoval)}
+        title="즐겨찾기 삭제"
+        message="즐겨찾기에서 삭제할까요?"
+        cancelLabel="취소"
+        confirmLabel="삭제"
+        onClose={() => setPendingFavoriteRemoval(null)}
+        onConfirm={handleConfirmFavoriteRemoval}
+      />
     </>
+  );
+}
+
+function App() {
+  return (
+    <ToastProvider>
+      <AppContent />
+    </ToastProvider>
   );
 }
 

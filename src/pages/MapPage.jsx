@@ -7,13 +7,14 @@ import {
 } from "../api/buildingApi";
 import BottomNav from "../components/BottomNav";
 import ClassroomCard from "../components/ClassroomCard";
+import FloorPlanSvg from "../components/FloorPlan";
+import { useToast } from "../components/ToastProvider";
 import {
   Container as MapContainer,
   Marker,
   NaverMap,
   NavermapsProvider,
 } from "react-naver-maps";
-import FloorPlanSvg from "../components/FloorPlan";
 import { formatClassTime } from "../utils/timeFormat";
 
 function normalizeClassroom(classroom) {
@@ -46,21 +47,18 @@ function MapPage({
   );
   const [floorPlan, setFloorPlan] = useState(null);
   const [floorClassrooms, setFloorClassrooms] = useState([]);
+  const { showToast } = useToast();
 
-  const hasNaverMaps = typeof window !== "undefined" && window.naver && window.naver.maps;
+  const hasNaverMaps =
+    typeof window !== "undefined" && window.naver && window.naver.maps;
   const defaultDankookUnivCoords = { lat: 37.320573, lng: 127.1276137 };
   let dankookBounds = null;
-  let swPosition = null;
-  let nePosition = null;
 
   if (hasNaverMaps) {
     dankookBounds = new window.naver.maps.LatLngBounds(
-      new window.naver.maps.LatLng(37.317391, 127.123725), // 남서쪽
-      new window.naver.maps.LatLng(37.323755, 127.131502) // 북동쪽
+      new window.naver.maps.LatLng(37.317391, 127.123725),
+      new window.naver.maps.LatLng(37.323755, 127.131502)
     );
-    swPosition = dankookBounds.getSW();
-    nePosition = dankookBounds.getNE();
-    dankookBounds = new window.naver.maps.LatLngBounds(swPosition, nePosition);
   }
 
   useEffect(() => {
@@ -69,7 +67,7 @@ function MapPage({
         const response = await getBuildings();
         setBuildings(response.buildings ?? []);
       } catch (error) {
-        alert(error.message || "건물 목록을 불러오지 못했습니다.");
+        showToast(error.message || "건물 목록을 불러오지 못했습니다.", "error");
       }
     }
 
@@ -96,8 +94,8 @@ function MapPage({
         const nextSelectedFloor = hasSavedFloor
           ? savedFloor
           : hasFirstFloor
-          ? 1
-          : nextFloors[0]?.floorValue ?? 1;
+            ? 1
+            : nextFloors[0]?.floorValue ?? 1;
 
         setSelectedFloor(nextSelectedFloor);
         onUpdateMapView?.({
@@ -105,7 +103,7 @@ function MapPage({
           selectedFloor: nextSelectedFloor,
         });
       } catch (error) {
-        alert(error.message || "층 목록을 불러오지 못했습니다.");
+        showToast(error.message || "층 목록을 불러오지 못했습니다.", "error");
       }
     }
 
@@ -120,7 +118,7 @@ function MapPage({
     async function loadFloorData() {
       setFloorPlan(null);
       setFloorClassrooms([]);
-      
+
       try {
         const [planResponse, statusResponse] = await Promise.all([
           getFloorPlan(selectedBuilding.buildingId, selectedFloor),
@@ -137,18 +135,12 @@ function MapPage({
           )
         );
       } catch (error) {
-        alert(error.message || "층별 지도 정보를 불러오지 못했습니다.");
+        showToast(error.message || "층별 지도 정보를 불러오지 못했습니다.", "error");
       }
     }
 
     loadFloorData();
   }, [selectedBuilding, selectedFloor]);
-
-  const handleMapLoad = (map) => {
-    if (!map) {
-      return;
-    }
-  };
 
   const handleSelectBuilding = (building) => {
     setSelectedBuilding(building);
@@ -176,7 +168,6 @@ function MapPage({
     });
   };
 
-  const svgUrl = selectedBuilding?.floorPlans?.[String(selectedFloor)];
   const selectedFloorLabel =
     floors.find((floor) => floor.floorValue === selectedFloor)?.floorLabel ??
     `${selectedFloor}층`;
@@ -188,7 +179,7 @@ function MapPage({
 
         {!selectedBuilding ? (
           <section className="campus-map-box">
-            <p className="map-title">전체 단국대학교 죽전캠퍼스 지도 </p>
+            <p className="map-title">단국대학교 죽전캠퍼스 지도</p>
 
             <MapContainer
               style={{
@@ -201,13 +192,12 @@ function MapPage({
               }}
             >
               <NaverMap
-              key="dankook-map"
+                key="dankook-map"
                 defaultCenter={defaultDankookUnivCoords}
                 defaultZoom={16}
                 minZoom={16}
                 maxZoom={18}
                 maxBounds={dankookBounds}
-                onLoad={handleMapLoad}
                 style={{ width: "100%", height: "100%" }}
                 scaleControl={true}
                 logoControl={true}
@@ -236,11 +226,8 @@ function MapPage({
           </section>
         ) : (
           <>
-            <button
-              className="back-button"
-              onClick={handleBackToCampusMap}
-            >
-              ← 전체 학교 지도
+            <button className="back-button" onClick={handleBackToCampusMap}>
+              {"← 전체 캠퍼스 지도"}
             </button>
 
             <section className="floor-plan-card">
@@ -249,16 +236,13 @@ function MapPage({
                 <strong>{selectedFloorLabel}</strong>
               </div>
               <div className="floor-plan-frame">
-              {floorPlan?.imageUrl ? (
-                <FloorPlanSvg
-                  svgUrl={floorPlan.imageUrl}
-                  room={floorClassrooms}
-                />
-              ) : (
-                <p>
-                  {selectedBuilding.buildingName} {selectedFloorLabel} 평면도 준비 중
-                </p>
-              )}
+                {floorPlan?.imageUrl ? (
+                  <FloorPlanSvg svgUrl={floorPlan.imageUrl} room={floorClassrooms} />
+                ) : (
+                  <p>
+                    {selectedBuilding.buildingName} {selectedFloorLabel} 평면도 준비 중
+                  </p>
+                )}
               </div>
             </section>
 
@@ -268,7 +252,8 @@ function MapPage({
                 사용 가능
               </span>
               <span>
-                <i className="legend-dot soon" />곧 수업
+                <i className="legend-dot soon" />
+                곧 수업
               </span>
               <span>
                 <i className="legend-dot busy" />

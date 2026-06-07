@@ -1,5 +1,38 @@
-﻿.profile-card {
-  position: relative;
+.home-hero {
+  margin-bottom: 18px;
+}
+
+.home-hero-eyebrow {
+  display: inline-block;
+  margin-bottom: 8px;
+  color: #5f7f9c;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.home-hero h1 {
+  margin: 0 0 8px;
+  color: #17324d;
+  font-size: 30px;
+  line-height: 1.2;
+}
+
+.home-hero p {
+  margin: 0;
+  color: #5f7f9c;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.profile-main-row {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -26,7 +59,7 @@
   display: grid;
   place-items: center;
   border: 3px solid #bfe2ff;
-  background: #e7f4ff;
+  background: linear-gradient(180deg, #e7f4ff 0%, #d8edff 100%);
   font-size: 42px;
 }
 
@@ -58,34 +91,54 @@
   display: none;
 }
 
+.profile-info {
+  flex: 1;
+}
+
 .profile-info p {
   margin: 8px 0;
+  color: #486581;
+}
+
+.profile-info strong {
+  color: #17324d;
+  margin-right: 6px;
 }
 
 .profile-action-group {
-  position: absolute;
-  top: 14px;
-  right: 14px;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: stretch;
+  gap: 10px;
 }
 
 .profile-action-group .ghost-button {
-  min-width: 86px;
+  flex: 1;
+  min-height: 40px;
 }
 
-.recent-card h2 {
-  margin-top: 0;
+.section-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.recent-card h2,
+.home-cta-card h2 {
+  margin: 0;
+}
+
+.section-hint {
+  color: #7a93ab;
+  font-size: 12px;
+  text-align: right;
 }
 
 .recent-room-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
-
 
 .recent-room {
   display: flex;
@@ -93,12 +146,19 @@
   justify-content: space-between;
   gap: 12px;
   width: 100%;
-  min-height: 58px;
-  padding: 10px 12px;
+  min-height: 62px;
+  padding: 12px 14px;
   border: 1px solid #cfe5fb;
-  border-radius: 14px;
+  border-radius: 16px;
   background: #f7fbff;
   text-align: left;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.recent-room:hover {
+  border-color: #9fc9ee;
+  box-shadow: 0 10px 20px rgba(18, 103, 214, 0.08);
+  transform: translateY(-1px);
 }
 
 .recent-room-main {
@@ -117,6 +177,13 @@
 .recent-room-main small {
   color: #6f8daa;
   font-size: 12px;
+}
+
+.recent-room-side {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
 }
 
 .recent-room-status {
@@ -142,10 +209,42 @@
   background: #edf2f7;
 }
 
+.recent-room-arrow {
+  color: #7a93ab;
+  font-size: 24px;
+  line-height: 1;
+}
+
 .recent-room-count {
-  margin: 10px 0 0;
+  margin: 12px 0 0;
   color: #6f8daa;
   font-size: 12px;
   text-align: right;
 }
 
+.home-cta-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: white;
+}
+
+.home-cta-eyebrow {
+  display: inline-block;
+  margin-bottom: 8px;
+  color: #1267d6;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.home-cta-card p {
+  margin: 10px 0 0;
+  color: #5f7f9c;
+  line-height: 1.5;
+}
+
+.home-cta-card .primary-button {
+  align-self: flex-start;
+}

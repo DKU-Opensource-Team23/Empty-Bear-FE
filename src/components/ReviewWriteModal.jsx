@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { getReviewTags } from "../api/tagApi";
+import { useToast } from "./ToastProvider";
 
 function ReviewWriteModal({ isOpen, classroom, onClose, onSubmit }) {
   const [reviewTags, setReviewTags] = useState([]);
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [isLoadingTags, setIsLoadingTags] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (!isOpen) {
@@ -19,7 +21,7 @@ function ReviewWriteModal({ isOpen, classroom, onClose, onSubmit }) {
         const response = await getReviewTags();
         setReviewTags(response.tags ?? []);
       } catch (error) {
-        alert(error.message || "리뷰 태그를 불러오지 못했습니다.");
+        showToast(error.message || "리뷰 태그를 불러오지 못했습니다.", "error");
       } finally {
         setIsLoadingTags(false);
       }
@@ -42,17 +44,17 @@ function ReviewWriteModal({ isOpen, classroom, onClose, onSubmit }) {
 
   const handleSubmit = async () => {
     if (selectedTagIds.length === 0) {
-      alert("리뷰 태그를 하나 이상 선택해 주세요.");
+      showToast("리뷰 태그를 하나 이상 선택해 주세요.", "info");
       return;
     }
 
     try {
       setIsSubmitting(true);
       const response = await onSubmit(selectedTagIds);
-      alert(response?.message || "리뷰가 등록되었습니다.");
+      showToast(response?.message || "리뷰가 등록되었습니다.", "success");
       onClose();
     } catch (error) {
-      alert(error.message || "리뷰 등록에 실패했습니다.");
+      showToast(error.message || "리뷰 등록에 실패했습니다.", "error");
     } finally {
       setIsSubmitting(false);
     }
