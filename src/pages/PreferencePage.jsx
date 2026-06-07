@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getBuildings } from "../api/buildingApi";
+import { useToast } from "../components/ToastProvider";
 import { updateMyPreference } from "../api/userApi";
 import { formatAvailableTime } from "../utils/timeFormat";
 
@@ -14,6 +15,7 @@ function PreferencePage({
   const [minAvailableTime, setMinAvailableTime] = useState("");
   const [needOutlet, setNeedOutlet] = useState("");
   const [isSavingPreference, setIsSavingPreference] = useState(false);
+  const { showToast } = useToast();
 
   useEffect(() => {
     async function loadBuildings() {
@@ -21,7 +23,7 @@ function PreferencePage({
         const response = await getBuildings();
         setBuildings(response.buildings ?? []);
       } catch (error) {
-        alert(error.message || "건물 목록을 불러오지 못했습니다.");
+        showToast(error.message || "건물 목록을 불러오지 못했습니다.", "error");
       }
     }
 
@@ -43,7 +45,7 @@ function PreferencePage({
       preferredBuildingId !== "" || minAvailableTime !== "" || needOutlet !== "";
 
     if (!hasPreferenceValue) {
-      alert("저장할 선호 설정을 하나 이상 선택해주세요.");
+      showToast("저장할 선호 설정을 하나 이상 선택해주세요.", "info");
       return;
     }
 
@@ -58,11 +60,11 @@ function PreferencePage({
       });
 
       onUpdatePreference(response.preference);
-      alert("선호 설정이 저장되었습니다.");
+      showToast("선호 설정이 저장되었습니다.", "success");
       onClose();
       onMovePage("recommend");
     } catch (error) {
-      alert(error.message || "선호 설정 저장에 실패했습니다.");
+      showToast(error.message || "선호 설정 저장에 실패했습니다.", "error");
     } finally {
       setIsSavingPreference(false);
     }
@@ -81,11 +83,7 @@ function PreferencePage({
   ];
 
   return (
-    <div
-      className="modal-backdrop"
-      role="presentation"
-      onClick={onClose}
-    >
+    <div className="modal-backdrop" role="presentation" onClick={onClose}>
       <section
         className="preference-modal"
         role="dialog"

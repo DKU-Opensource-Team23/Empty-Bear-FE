@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { getBuildings } from "../api/buildingApi";
-import { getRecommendedClassrooms } from "../api/recommendApi";
 import BottomNav from "../components/BottomNav";
 import ClassroomCard from "../components/ClassroomCard";
+import { useToast } from "../components/ToastProvider";
+import { getRecommendedClassrooms } from "../api/recommendApi";
 import { formatAvailableTime, formatClassTime } from "../utils/timeFormat";
 
 function normalizeClassroom(classroom) {
@@ -50,6 +51,7 @@ function RecommendPage({
   const [classrooms, setClassrooms] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const { showToast } = useToast();
 
   const loadClassrooms = async () => {
     try {
@@ -67,10 +69,10 @@ function RecommendPage({
       setClassrooms(
         (response.classrooms ?? [])
           .map(normalizeClassroom)
-          .sort((a, b) => (b.availableMinutes ?? 0) - (a.availableMinutes ?? 0))
+          .sort((left, right) => (right.availableMinutes ?? 0) - (left.availableMinutes ?? 0))
       );
     } catch (error) {
-      alert(error.message || "강의실 목록을 불러오지 못했습니다.");
+      showToast(error.message || "강의실 목록을 불러오지 못했습니다.", "error");
     } finally {
       setIsLoading(false);
     }
@@ -82,7 +84,7 @@ function RecommendPage({
         const response = await getBuildings();
         setBuildings(response.buildings ?? []);
       } catch (error) {
-        alert(error.message || "건물 목록을 불러오지 못했습니다.");
+        showToast(error.message || "건물 목록을 불러오지 못했습니다.", "error");
       }
     }
 
@@ -119,7 +121,7 @@ function RecommendPage({
             max="180"
             step="10"
             value={minAvailableTime}
-            onChange={(e) => setMinAvailableTime(Number(e.target.value))}
+            onChange={(event) => setMinAvailableTime(Number(event.target.value))}
           />
           {formatAvailableTime(minAvailableTime)} 이상
         </label>
@@ -130,7 +132,7 @@ function RecommendPage({
           <span>강의실 위치</span>
           <select
             value={buildingId}
-            onChange={(e) => setBuildingId(e.target.value)}
+            onChange={(event) => setBuildingId(event.target.value)}
           >
             <option value="">전체 건물</option>
             {buildings.map((building) => (
@@ -145,7 +147,7 @@ function RecommendPage({
           <input
             type="checkbox"
             checked={needOutlet}
-            onChange={(e) => setNeedOutlet(e.target.checked)}
+            onChange={(event) => setNeedOutlet(event.target.checked)}
           />
           콘센트 필요
         </label>

@@ -1,9 +1,13 @@
 import { useState } from "react";
+import MessageModal from "../components/MessageModal";
 import ReviewWriteModal from "../components/ReviewWriteModal";
+import { useToast } from "../components/ToastProvider";
 import useClassroomReviews from "../utils/useClassroomReviews";
 
 function ReviewPage({ classroom, onBack }) {
   const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const { showToast } = useToast();
   const { reviews, myReview, isLoading, submitReview, removeReview } =
     useClassroomReviews(classroom.classroomId);
 
@@ -12,24 +16,19 @@ function ReviewPage({ classroom, onBack }) {
       return;
     }
 
-    const isConfirmed = window.confirm("내 리뷰를 삭제할까요?");
-
-    if (!isConfirmed) {
-      return;
-    }
-
     try {
       const response = await removeReview(myReview.reviewId);
-      alert(response?.message || "리뷰가 삭제되었습니다.");
+      showToast(response?.message || "리뷰가 삭제되었습니다.", "success");
+      setIsDeleteModalOpen(false);
     } catch (error) {
-      alert(error.message || "리뷰 삭제에 실패했습니다.");
+      showToast(error.message || "리뷰 삭제에 실패했습니다.", "error");
     }
   };
 
   return (
     <main className="page">
       <button className="back-button" onClick={onBack}>
-        ← 뒤로가기
+        {"← 뒤로가기"}
       </button>
 
       <div className="review-page-header">
@@ -58,7 +57,10 @@ function ReviewPage({ classroom, onBack }) {
               ))}
             </div>
             <div className="review-submit-row">
-              <button className="ghost-button danger-button" onClick={handleDelete}>
+              <button
+                className="ghost-button danger-button"
+                onClick={() => setIsDeleteModalOpen(true)}
+              >
                 삭제
               </button>
             </div>
@@ -94,6 +96,16 @@ function ReviewPage({ classroom, onBack }) {
         classroom={classroom}
         onClose={() => setIsWriteModalOpen(false)}
         onSubmit={submitReview}
+      />
+
+      <MessageModal
+        isOpen={isDeleteModalOpen}
+        title="리뷰 삭제"
+        message="내 리뷰를 삭제할까요?"
+        cancelLabel="취소"
+        confirmLabel="삭제"
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDelete}
       />
     </main>
   );

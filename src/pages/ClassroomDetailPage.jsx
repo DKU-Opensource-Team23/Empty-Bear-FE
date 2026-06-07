@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getClassroomSchedule } from "../api/classroomApi";
+import { useToast } from "../components/ToastProvider";
 import { summarizeReviewTags } from "../utils/reviewSummary";
 import { formatAvailableTime } from "../utils/timeFormat";
 import useClassroomReviews from "../utils/useClassroomReviews";
@@ -86,6 +87,7 @@ function ClassroomDetailPage({
   onBack,
 }) {
   const [schedules, setSchedules] = useState([]);
+  const { showToast } = useToast();
   const { reviews } = useClassroomReviews(classroom.classroomId);
   const isFavorite = favorites.some(
     (room) => room.classroomId === classroom.classroomId
@@ -105,7 +107,7 @@ function ClassroomDetailPage({
         const scheduleResponse = await getClassroomSchedule(classroom.classroomId);
         setSchedules(scheduleResponse.weeklySchedule ?? []);
       } catch (error) {
-        alert(error.message || "강의실 상세 정보를 불러오지 못했습니다.");
+        showToast(error.message || "강의실 상세 정보를 불러오지 못했습니다.", "error");
       }
     }
 
@@ -115,7 +117,7 @@ function ClassroomDetailPage({
   return (
     <main className="page">
       <button className="back-button" onClick={onBack}>
-        ← 뒤로가기
+        {"← 뒤로가기"}
       </button>
 
       <section className="detail-box">
