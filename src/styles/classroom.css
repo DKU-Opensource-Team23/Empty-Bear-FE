@@ -261,19 +261,19 @@
 
 .detail-review-row {
   display: flex;
-  align-items: end;
+  align-items: flex-start;
   gap: 12px;
   margin-top: 18px;
 }
 
-.review-preview-list {
+.review-summary-list {
   flex: 1;
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
-.review-preview,
+.review-summary-chip,
 .empty-review {
   margin: 0;
   padding: 10px 12px;
@@ -281,14 +281,7 @@
   background: #f7fbff;
 }
 
-.review-preview {
-  color: #17324d;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.review-preview span,
+.review-summary-chip,
 .review-list-item span {
   display: inline-flex;
   align-items: center;
@@ -300,6 +293,10 @@
   background: white;
   font-size: 12px;
   font-weight: 700;
+}
+
+.review-summary-chip {
+  color: #1267d6;
 }
 
 .empty-review {
