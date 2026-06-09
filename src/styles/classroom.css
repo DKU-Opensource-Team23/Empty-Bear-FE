@@ -7,10 +7,19 @@
   margin-bottom: 12px;
   border-radius: 16px;
   background: white;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.classroom-card:hover,
+.classroom-card:focus-within {
+  border-color: #9fc9ee;
+  box-shadow: 0 10px 20px rgba(18, 103, 214, 0.08);
+  transform: translateY(-1px);
 }
 
 .card-main {
   flex: 1;
+  cursor: pointer;
 }
 
 .card-title-row,
