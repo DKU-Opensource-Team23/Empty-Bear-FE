@@ -84,13 +84,16 @@ function HomePage({
 
           <div className="profile-info">
             <p>
-              <strong>닉네임</strong> {user.nickname}
+              <strong>닉네임</strong>
+              <span>{user.nickname}</span>
             </p>
             <p>
-              <strong>학번</strong> {user.studentNumber}
+              <strong>학번</strong>
+              <span>{user.studentNumber}</span>
             </p>
             <p>
-              <strong>학과</strong> {user.department}
+              <strong>학과</strong>
+              <span>{user.department}</span>
             </p>
           </div>
         </div>

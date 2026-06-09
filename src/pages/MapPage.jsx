@@ -9,6 +9,7 @@ import BottomNav from "../components/BottomNav";
 import ClassroomCard from "../components/ClassroomCard";
 import FloorPlanSvg from "../components/FloorPlan";
 import { useToast } from "../components/ToastProvider";
+import dangomImage from "../image/단곰.png";
 import {
   Container as MapContainer,
   Marker,
@@ -175,11 +176,10 @@ function MapPage({
   return (
     <NavermapsProvider ncpKeyId="r6eww9eh1v">
       <main className="page">
-        <h1>지도</h1>
+        <h1>단국대학교 죽전 캠퍼스 지도</h1>
 
         {!selectedBuilding ? (
           <section className="campus-map-box">
-            <p className="map-title">단국대학교 죽전캠퍼스 지도</p>
 
             <MapContainer
               style={{
@@ -220,9 +220,13 @@ function MapPage({
               </NaverMap>
             </MapContainer>
 
-            <p className="map-helper-text">
-              건물을 선택하면 해당 건물의 층별 평면도를 확인할 수 있습니다.
-            </p>
+            <div className="map-guide-mascot">
+              <img src={dangomImage} alt="" aria-hidden="true" />
+              <div className="map-guide-copy">
+                <p>건물을 선택하세요</p>
+                <span>지도 위 마커를 누르면 층별 평면도를 확인할 수 있어요.</span>
+              </div>
+            </div>
           </section>
         ) : (
           <>
