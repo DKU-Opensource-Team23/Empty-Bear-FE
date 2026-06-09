@@ -96,13 +96,22 @@
 }
 
 .profile-info p {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  align-items: center;
+  column-gap: 8px;
   margin: 8px 0;
   color: #486581;
 }
 
 .profile-info strong {
   color: #17324d;
-  margin-right: 6px;
+}
+
+.profile-info span {
+  min-width: 0;
+  color: #486581;
+  font-weight: 700;
 }
 
 .profile-action-group {

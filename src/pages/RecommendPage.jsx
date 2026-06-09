@@ -6,6 +6,49 @@ import { useToast } from "../components/ToastProvider";
 import { getRecommendedClassrooms } from "../api/recommendApi";
 import { formatAvailableTime, formatClassTime } from "../utils/timeFormat";
 
+function TimeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="8" />
+      <path d="M12 7v5l3 2" />
+    </svg>
+  );
+}
+
+function BuildingIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 21V6a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v15" />
+      <path d="M9 21v-5h3v5" />
+      <path d="M8 8h1" />
+      <path d="M12 8h1" />
+      <path d="M8 12h1" />
+      <path d="M12 12h1" />
+      <path d="M3 21h18" />
+    </svg>
+  );
+}
+
+function OutletIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M9 7V4" />
+      <path d="M15 7V4" />
+      <path d="M7 7h10v5a5 5 0 0 1-10 0V7Z" />
+      <path d="M12 17v3" />
+    </svg>
+  );
+}
+
+function SearchIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="11" cy="11" r="7" />
+      <path d="m16 16 4 4" />
+    </svg>
+  );
+}
+
 function normalizeClassroom(classroom) {
   const availableHour = classroom.availableHour ?? 0;
   const availableMinute = classroom.availableMinute ?? 0;
@@ -102,6 +145,8 @@ function RecommendPage({
     setBuildingId(preference?.preferredBuilding?.buildingId ?? "");
     setNeedOutlet(preference?.needOutlet ?? false);
   };
+  const rangeProgress = `${(minAvailableTime / 180) * 100}%`;
+  const rangeProgressRatio = minAvailableTime / 180;
 
   return (
     <main className="page">
@@ -114,50 +159,89 @@ function RecommendPage({
 
       <section className="filter-box">
         <label className="filter-group">
-          <span>강의실 사용 가능 시간</span>
-          <input
-            type="range"
-            min="0"
-            max="180"
-            step="10"
-            value={minAvailableTime}
-            onChange={(event) => setMinAvailableTime(Number(event.target.value))}
-          />
-          {formatAvailableTime(minAvailableTime)} 이상
+          <span className="filter-label-row">
+            <span className="filter-icon-label">
+              <TimeIcon />
+              강의실 사용 가능 시간
+            </span>
+            <strong>{formatAvailableTime(minAvailableTime)} 이상</strong>
+          </span>
+          <span
+            className="time-range-control"
+            style={{
+              "--range-progress": rangeProgress,
+              "--range-progress-ratio": rangeProgressRatio,
+            }}
+          >
+            <span className="time-range-icon">
+              <TimeIcon />
+            </span>
+            <input
+              type="range"
+              min="0"
+              max="180"
+              step="10"
+              value={minAvailableTime}
+              onChange={(event) =>
+                setMinAvailableTime(Number(event.target.value))
+              }
+              aria-label="강의실 사용 가능 시간"
+            />
+          </span>
         </label>
 
         <div className="filter-divider" />
 
-        <label className="filter-group">
-          <span>강의실 위치</span>
-          <select
-            value={buildingId}
-            onChange={(event) => setBuildingId(event.target.value)}
+        <label className="filter-group building-filter-group">
+          <span className="filter-icon-label">
+            <BuildingIcon />
+            강의실 위치
+          </span>
+          <span className="building-select-shell">
+            <span className="building-select-icon">
+              <BuildingIcon />
+            </span>
+            <select
+              value={buildingId}
+              onChange={(event) => setBuildingId(event.target.value)}
+              aria-label="강의실 위치"
+            >
+              <option value="">전체 건물</option>
+              {buildings.map((building) => (
+                <option key={building.buildingId} value={building.buildingId}>
+                  {building.buildingName}
+                </option>
+              ))}
+            </select>
+          </span>
+        </label>
+
+        <div className="filter-action-row">
+          <label className={`outlet-toggle ${needOutlet ? "active" : ""}`}>
+            <input
+              type="checkbox"
+              checked={needOutlet}
+              onChange={(event) => setNeedOutlet(event.target.checked)}
+              aria-label="콘센트 필요"
+            />
+            <span className="outlet-toggle-track">
+              <span className="outlet-toggle-thumb">
+                <OutletIcon />
+              </span>
+              <span className="outlet-toggle-text">
+                {needOutlet ? "콘센트 있어요" : "콘센트 없어요"}
+              </span>
+            </span>
+          </label>
+
+          <button
+            className="primary-button search-submit-button icon-only"
+            onClick={loadClassrooms}
+            aria-label="검색"
           >
-            <option value="">전체 건물</option>
-            {buildings.map((building) => (
-              <option key={building.buildingId} value={building.buildingId}>
-                {building.buildingName}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="checkbox-row">
-          <input
-            type="checkbox"
-            checked={needOutlet}
-            onChange={(event) => setNeedOutlet(event.target.checked)}
-          />
-          콘센트 필요
-        </label>
-
-        <button
-          className="primary-button search-submit-button"
-          onClick={loadClassrooms}
-        >
-          검색
-        </button>
+            <SearchIcon />
+          </button>
+        </div>
       </section>
 
       {hasSearched && (
