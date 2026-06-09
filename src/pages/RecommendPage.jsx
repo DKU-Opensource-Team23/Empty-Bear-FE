@@ -144,6 +144,9 @@ function RecommendPage({
     setMinAvailableTime(preference?.minAvailableTime ?? 30);
     setBuildingId(preference?.preferredBuilding?.buildingId ?? "");
     setNeedOutlet(preference?.needOutlet ?? false);
+    setClassrooms([]);
+    setHasSearched(false);
+    setIsLoading(false);
   };
   const rangeProgress = `${(minAvailableTime / 180) * 100}%`;
   const rangeProgressRatio = minAvailableTime / 180;
