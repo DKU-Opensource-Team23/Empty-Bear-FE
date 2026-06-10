@@ -17,21 +17,12 @@
   * 즐겨찾기 된 강의실 목록 확인
 
 ### 3. 실행 방법
-* 요구사항
-  * Gradle: Gradle 8.x 이상
-  * JDK: Java 17 권장
-  * MySQL: MySQL 8.4 권장
-  * Node.js: Node.js v24.15.0 사용
-  * npm: npm 11.12.1 사용
-  * Vite: Vite 8.0.11 사용
-  * React: React 19.2.6 사용
-* 설치 및 실행
-  * 저장소 복제  
-    `git clone https://github.com/DKU-Opensource-Team23/Empty-Bear-FE.git`  
-    `git clone https://github.com/DKU-Opensource-Team23/Empty-Bear-BE.git`
-  * 백엔드 서버 실행  
+1. 저장소 복제  
+   `git clone https://github.com/DKU-Opensource-Team23/Empty-Bear-FE.git`  
+   `git clone https://github.com/DKU-Opensource-Team23/Empty-Bear-BE.git`
+2. 백엔드 서버 실행  
     `gradlew bootrun`
-  * 개발 실행  
+3. 개발 실행  
     `npm install`  
     `npm run dev`
 
